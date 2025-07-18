@@ -11,3 +11,13 @@
 
 #!.yarn/cache
 .pnp.*
+node_modules/
+dist/
+.env.local
+*.zip
+/src/generated/prisma
+data/extracted
+data/por_files
+data/sheets
+!data/pathfinder/*
+src/packages/prisma

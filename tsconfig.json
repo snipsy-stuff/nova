@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "baseUrl": "src",
+        "outDir": "dist",
+        "strict": true,
+        "alwaysStrict": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": false,
+        "noImplicitThis": true,
+        "noFallthroughCasesInSwitch": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "downlevelIteration": true,
+        // "paths": {
+        //     "@internal-typings/pathfinder/*": [
+        //         "packages/typings/pathfinder/*"
+        //     ],
+        //     "@core/*": ["packages/core/*"],
+        //     "@pathfinder/*": ["packages/pathfinder/*"],
+        //     "@interactions/*": ["packages/interactions/*"],
+        //     "@util/*": ["packages/util/*"],
+        //     "@errors/*": ["packages/errors/*"],
+        //     "@events/*": ["packages/events/*"],
+        //     "@db/*": ["packages/prisma/*"]
+        // },
+        "pretty": true
+    },
+    "include": ["typings/**/*", "src/**/*"]
+}
