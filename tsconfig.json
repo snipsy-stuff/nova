@@ -21,18 +21,12 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "downlevelIteration": true,
-        // "paths": {
-        //     "@internal-typings/pathfinder/*": [
-        //         "packages/typings/pathfinder/*"
-        //     ],
-        //     "@core/*": ["packages/core/*"],
-        //     "@pathfinder/*": ["packages/pathfinder/*"],
-        //     "@interactions/*": ["packages/interactions/*"],
-        //     "@util/*": ["packages/util/*"],
-        //     "@errors/*": ["packages/errors/*"],
-        //     "@events/*": ["packages/events/*"],
-        //     "@db/*": ["packages/prisma/*"]
-        // },
+        "paths": {
+            "@nova/typings/*": ["packages/typings/*"],
+            "@nova/listeners/*": ["packages/listeners/*"],
+            "@nova/core/*": ["packages/core/*"],
+            "@nova/util/*": ["packages/util/*"]
+        },
         "pretty": true
     },
     "include": ["typings/**/*", "src/**/*"]

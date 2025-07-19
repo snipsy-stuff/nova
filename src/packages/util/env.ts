@@ -1,10 +1,14 @@
 import * as fs from 'fs';
+import util from 'node:util';
 /**
  * typing information of the .env file.
  */
 interface Env {
     DISCORD_TOKEN: string;
-    DISCORD_BOT_MODE: string;
+    BOOT_LOG_CHANNEL: string;
+    COMMAND_LOG_CHANNEL: string;
+    ERROR_LOG_CHANNEL: string;
+    JOIN_LOG_CHANNEL: string;
 }
 /**
  *
@@ -12,24 +16,9 @@ interface Env {
  * @returns
  */
 export function parseEnv(filePath: string): Env {
-    const envData: Record<string, string> = {};
-
     try {
         const fileContent = fs.readFileSync(filePath, 'utf-8');
-        const lines = fileContent.split('\n');
-
-        for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (!trimmedLine || trimmedLine.startsWith('#')) {
-                continue;
-            }
-
-            const [key, ...value] = trimmedLine.split('=');
-
-            if (key && value !== undefined) {
-                envData[key.trim()] = value.join('=').trim();
-            }
-        }
+        return util.parseEnv(fileContent) as unknown as Env;
     } catch (error) {
         if (error instanceof Error) {
             const errnoError = error as NodeJS.ErrnoException;
@@ -37,8 +26,11 @@ export function parseEnv(filePath: string): Env {
             if (errnoError.code === 'ENOENT') {
                 console.error(`File not found: ${filePath}`);
                 return {
-                    DISCORD_BOT_MODE: '',
                     DISCORD_TOKEN: '',
+                    BOOT_LOG_CHANNEL: '',
+                    COMMAND_LOG_CHANNEL: '',
+                    ERROR_LOG_CHANNEL: '',
+                    JOIN_LOG_CHANNEL: '',
                 };
             }
         } else {
