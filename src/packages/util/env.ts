@@ -38,6 +38,4 @@ export function parseEnv(filePath: string): Env {
         }
         throw error;
     }
-
-    return envData as unknown as Env;
 }
