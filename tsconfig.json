@@ -25,7 +25,8 @@
             "@nova/typings/*": ["packages/typings/*"],
             "@nova/listeners/*": ["packages/listeners/*"],
             "@nova/core/*": ["packages/core/*"],
-            "@nova/util/*": ["packages/util/*"]
+            "@nova/util/*": ["packages/util/*"],
+            "@nova/commands/*": ["packages/commands/*"]
         },
         "pretty": true
     },

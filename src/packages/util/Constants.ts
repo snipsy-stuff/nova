@@ -6,3 +6,5 @@ export const CHANNELS = {
     ERROR_LOG: '',
     JOIN_LOG: '',
 };
+
+export const owners: string[] = ['1395801348490137751'];
