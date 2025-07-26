@@ -1,7 +1,9 @@
 import { CustomListener } from '@nova/listeners/CustomListener';
+import { parseEnv } from '@nova/util/env';
 import { GatewayClientEvents } from 'detritus-client';
 import { ActivityTypes } from 'detritus-client/lib/constants';
-
+import { ChannelGuildText } from 'detritus-client/lib/structures';
+import { Embed } from 'detritus-client/lib/utils';
 @CustomListener.applyOptions({
     event: CustomListener.eventNames.GATEWAY_READY,
     emitter: 'client',
@@ -22,5 +24,19 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                 },
             ],
         });
+
+        const existing = parseEnv();
+        if (existing.BOOT_LOG_CHANNEL) {
+            const channel = this.client.channels.get(
+                existing.BOOT_LOG_CHANNEL,
+            ) as ChannelGuildText;
+            if (channel) {
+                const embed = new Embed().setDescription(`booted.`);
+
+                await channel
+                    .createMessage({ embeds: [embed] })
+                    .catch(console.error);
+            }
+        }
     }
 }

@@ -57,7 +57,7 @@ export class SheetAddCommand extends SubCommand {
         const filecontent = Buffer.from(await data.arrayBuffer());
         const player = ctx.args.user?.id ?? ctx.user.id;
         await writeFile(dir, filecontent, { flag: 'w' });
-        const char = await ctx.client.pathfinder.sheets.create(
+        const char = await ctx.client.games.pathfinder.sheets.create(
             dir,
             player,
         );

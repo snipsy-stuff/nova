@@ -15,7 +15,7 @@ interface Env {
  * @param filePath the path to the .env file
  * @returns
  */
-export function parseEnv(filePath: string): Env {
+export function parseEnv(filePath = './.env.local'): Env {
     try {
         const fileContent = fs.readFileSync(filePath, 'utf-8');
         return util.parseEnv(fileContent) as unknown as Env;

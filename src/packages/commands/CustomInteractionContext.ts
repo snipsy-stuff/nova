@@ -77,6 +77,10 @@ export class CustomContext<
             args,
         );
     }
+
+    get economy() {
+        return this.client.games.economy;
+    }
 }
 
 export type Context = CustomContext<Record<'', undefined>>;

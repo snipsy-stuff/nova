@@ -5,7 +5,7 @@ import { GameManager } from 'packages/game/GameManager';
 
 export class NovaShardClient extends ShardClient {
     logger = new Logger('client');
-    pathfinder: GameManager = new GameManager();
+    games: GameManager = new GameManager(this);
 
     setPresence(presence: PresenceOptions) {
         return new Promise((res, rej) => {
