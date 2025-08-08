@@ -120,6 +120,10 @@ export class SheetInfoCommand extends SubCommand {
         if (character.image) {
             img = await readFile(character.image);
         }
+        ctx.client.logger.debug(
+            character.personal.charheight.toString(),
+            'CHAR_HEIGHT',
+        );
 
         const mainEmbed = new Embed()
             .setColor(0xcdccff)

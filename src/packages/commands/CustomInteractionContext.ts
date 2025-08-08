@@ -9,7 +9,10 @@ import {
     ParsedArgs,
 } from 'detritus-client/lib/interaction';
 import { InteractionCommandClient } from 'detritus-client';
-import { Permissions } from 'detritus-client/lib/constants';
+import {
+    MessageFlags,
+    Permissions,
+} from 'detritus-client/lib/constants';
 import { emotes } from '@nova/util/emote';
 import { NovaShardClient } from '@nova/core/client/ShardClient';
 export class CustomContext<
@@ -52,6 +55,21 @@ export class CustomContext<
                 flags: 64,
             },
         );
+    }
+
+    async display(components: { content: string }[]) {
+        return this.send({
+            flags: MessageFlags.IS_COMPONENTS_V2,
+            components: [
+                {
+                    type: 9,
+                    components: components.map((c) => ({
+                        type: 10,
+                        content: c.content,
+                    })),
+                },
+            ],
+        });
     }
 
     async say(content: string, options?: InteractionEditOrRespond) {

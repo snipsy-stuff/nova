@@ -187,8 +187,10 @@ export class SheetManager {
         })[0];
 
         newData.personal = char.personal[0];
-        newData.personal.charheight =
-            +char.personal[0].charheight[0].value / 12;
+        console.log('HEIGHT:', char.personal[0].charheight[0]);
+        newData.personal.charheight = convertInchesTofeet(
+            +char.personal[0].charheight[0].value,
+        );
         newData.personal.charweight =
             +char.personal[0].charweight[0].value;
         newData.languages = char.languages[0].language.map(
@@ -621,4 +623,7 @@ export class SheetManager {
             );
         });
     }
+}
+function convertInchesTofeet(inches: number): string {
+    return `${Math.floor(inches / 12)}'${inches % 12}"`;
 }

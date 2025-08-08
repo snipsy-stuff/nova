@@ -36,7 +36,8 @@ export class SheetAddCommand extends SubCommand {
             user?: User;
         }>,
     ) {
-        const dir = `./data/por_files/${ctx.args.sheet.filename}`;
+        const filename = `${ctx.args.sheet.filename}.${Date.now()}.por`;
+        const dir = `./data/por_files/${filename}`;
         ctx.client.logger.debug(
             `creating new sheet in ${dir}. fetching data..`,
             'commands:sheet.add',
@@ -86,11 +87,11 @@ export class SheetAddCommand extends SubCommand {
                     `level: ${char.level}, HP: ${char.health.currenthp}`,
                     `classes ${char.classes.map((cls) => `${cls.name} (${cls.level})`)}`,
                     [
-                        `Height: ${char.personal.charheight}${char.personal.gender === 'Male' ? "*also known as 6'" : ''}`,
-                        `Weight ${char.personal.gender === 'Female' ? '*<do not ask a woman>*' : char.personal.charweight}`,
+                        `Height: ${char.personal.charheight}`,
+                        `Weight ${char.personal.charweight}lbs`,
                         `Age: ${char.personal.age}`,
                     ].join(' | '),
-                    `Bio: ${char.personal.description}`,
+                    `Bio: ${char.personal.description || 'empty over here'}`,
                 ].join('\n'),
             );
 
