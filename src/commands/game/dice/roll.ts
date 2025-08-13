@@ -2,6 +2,7 @@ import { CustomCommand } from '@nova/commands/CustomCommand';
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { StringOption } from '@nova/commands/options/StringOption';
 import { ComponentTextDisplay } from 'detritus-client/lib/utils';
+import { codestring } from 'detritus-client/lib/utils/markup';
 
 @CustomCommand.applyOptions({
     name: 'roll',
@@ -25,23 +26,22 @@ export default class RollCommand extends CustomCommand {
         const { total, details } = this.roll(dice);
 
         const rolls: number[] = [];
+        const rolles: string[] = [];
         for (const det of details) {
             rolls.push(...det.rolls);
+            rolles.push(det.dice);
         }
 
         const str = ['```js', rolls.join(', '), '```'].join('\n');
         const container = [
             new ComponentTextDisplay({
-                content: 'rolled into:',
+                content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(rolles.join(', '))}: \`${total}\` `,
             }),
             new ComponentTextDisplay({
                 content: str,
             }),
         ];
-        return ctx.display(
-            `:game_die:${label ? ` [${label}]` : ''} ${dice}: ${total}`,
-            container,
-        );
+        return ctx.display(container);
     }
 
     roll(input: string): {
@@ -58,8 +58,12 @@ export default class RollCommand extends CustomCommand {
             const modifier = match[3] ? parseInt(match[3]) : 0;
 
             const rolls: number[] = [];
-            for (let i = 0; i < numDice; i++) {
-                rolls.push(Math.floor(Math.random() * diceSides) + 1);
+            for (let i = 0; i < Math.min(numDice, 200); i++) {
+                rolls.push(
+                    Math.floor(
+                        Math.random() * Math.min(diceSides, 100),
+                    ) + 1,
+                );
             }
 
             const subtotal =
@@ -69,6 +73,7 @@ export default class RollCommand extends CustomCommand {
                 expression: match[0],
                 rolls,
                 modifier,
+                dice: `${Math.min(numDice, 200)}d${Math.min(diceSides, 100)}`,
                 total: subtotal,
             });
         }
@@ -90,4 +95,5 @@ interface DiceResult {
     rolls: number[];
     modifier: number;
     total: number;
+    dice: string;
 }

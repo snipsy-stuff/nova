@@ -61,7 +61,7 @@ export class CustomContext<
         );
     }
 
-    async display(text: string, displays: ComponentTextDisplay[]) {
+    async display(displays: ComponentTextDisplay[]) {
         const components = new ComponentContainer();
         const length = displays.length;
         for (let i = 0; i < displays.length; i++) {
@@ -79,10 +79,7 @@ export class CustomContext<
         });
         return this.send({
             flags: MessageFlags.IS_COMPONENTS_V2,
-            components: [
-                new ComponentTextDisplay().setContent(text),
-                components,
-            ],
+            components: [components],
         });
     }
 
