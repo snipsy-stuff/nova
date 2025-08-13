@@ -42,7 +42,7 @@ export class SheetAddCommand extends SubCommand {
             `creating new sheet in ${dir}. fetching data..`,
             'commands:sheet.add',
         );
-
+        await ctx.say('creating sheet...');
         const data = await fetch(ctx.args.sheet.url, {
             method: 'GET',
             headers: {}, // ensures no content-type is added
