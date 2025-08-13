@@ -46,6 +46,7 @@ export abstract class CustomListener implements EventOptions {
             INTERACTION_COMMAND_RUN: 'interaction_command_run',
             CLIENT_DEBUG: 'client_debug',
             EVENT_LOAD: 'events_load',
+            COMMAND_LOAD: 'commands_load',
         };
     }
 }

@@ -44,7 +44,7 @@ export default class AIChatCommand extends CustomCommand {
         );
         console.log(`resukt; ${data}`);
         console.log(typeof data, data.length);
-        const response = data[data.length - 1];
+        const response = data[data.length - 1] || data[0];
         return ctx.say(response.replaceAll('%', ''), { flags: 64 });
     }
 }

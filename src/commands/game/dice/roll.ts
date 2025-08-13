@@ -1,7 +1,7 @@
 import { CustomCommand } from '@nova/commands/CustomCommand';
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { StringOption } from '@nova/commands/options/StringOption';
-import { MessageFlags } from 'detritus-client/lib/constants';
+import { ComponentTextDisplay } from 'detritus-client/lib/utils';
 
 @CustomCommand.applyOptions({
     name: 'roll',
@@ -25,27 +25,22 @@ export default class RollCommand extends CustomCommand {
         const { total, details } = this.roll(dice);
 
         const rolls: number[] = [];
-
         for (const det of details) {
             rolls.push(...det.rolls);
         }
 
         const str = ['```js', rolls.join(', '), '```'].join('\n');
-        return ctx.rest.raw.createInteractionResponse(
-            ctx.interactionId,
-            ctx.token,
-            {
-                type: 4,
-                data: {
-                    flags: MessageFlags.IS_COMPONENTS_V2,
-                    components: [
-                        {
-                            type: 10,
-                            content: `${ctx.emote('success')} ${label ? `[${label}]` : ''} input: ${dice} | Result: ${total}`,
-                        },
-                    ],
-                },
-            },
+        const container = [
+            new ComponentTextDisplay({
+                content: 'rolled into:',
+            }),
+            new ComponentTextDisplay({
+                content: str,
+            }),
+        ];
+        return ctx.display(
+            `:game_die:${label ? ` [${label}]` : ''} ${dice}: ${total}`,
+            container,
         );
     }
 

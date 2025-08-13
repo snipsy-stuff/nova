@@ -51,6 +51,7 @@ export class CustomListenerHandler extends EventEmitter {
                 throw new Error('NO_VALID_HANDLER');
             }
             f.client = this.client;
+            if (!f.enabled) return;
 
             handler[f.type as 'on'](f.event, (...args: unknown[]) => {
                 return this.modules.get(f.id)?.run(...args);

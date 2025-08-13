@@ -15,6 +15,10 @@ import {
 } from 'detritus-client/lib/constants';
 import { emotes } from '@nova/util/emote';
 import { NovaShardClient } from '@nova/core/client/ShardClient';
+import {
+    ComponentContainer,
+    ComponentTextDisplay,
+} from 'detritus-client/lib/utils';
 export class CustomContext<
     Args extends ParsedArgs,
 > extends InteractionContext {
@@ -57,17 +61,27 @@ export class CustomContext<
         );
     }
 
-    async display(components: { content: string }[]) {
+    async display(text: string, displays: ComponentTextDisplay[]) {
+        const components = new ComponentContainer();
+        const length = displays.length;
+        for (let i = 0; i < displays.length; i++) {
+            const display = displays[i];
+            components.addTextDisplay(display);
+            if (length !== i && displays.length !== 1) {
+                components.addSeparator({
+                    divider: true,
+                    spacing: 1,
+                });
+            }
+        }
+        components.addTextDisplay({
+            content: `Requested by ${this.user.name}`,
+        });
         return this.send({
             flags: MessageFlags.IS_COMPONENTS_V2,
             components: [
-                {
-                    type: 9,
-                    components: components.map((c) => ({
-                        type: 10,
-                        content: c.content,
-                    })),
-                },
+                new ComponentTextDisplay().setContent(text),
+                components,
             ],
         });
     }

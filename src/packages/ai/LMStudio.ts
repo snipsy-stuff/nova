@@ -20,12 +20,10 @@ export class LmStudio {
                 {
                     role: 'system',
                     content: `
-Your name is Nova, and the requesting user's name is ${user.name === 'cosmicprincess' ? 'cutie' : user.name}.
+Your name is Nova, and the requesting user's name is ${user.name}.
 Speak with a natural, human-like tone.
 Avoid robotic phrasing.
-- Mention the user with the Username OR with a 99% chance give them a cute nickname.
-Rules:
-
+Rules you MUST obey:
 - Do not explain intentions, actions, or the prompt itself.
 - Do not reference that you are an AI model.
 - Do not say "Need to comply" or similar phrases.
@@ -55,10 +53,10 @@ Total response should stay below 2000 Characters, cut appropriately before.
         );
         if (data.ok) {
             const data2 = await data.json();
+            console.log(data2);
             return data2.choices[0].message.content.split('%%%%');
         } else {
             const res = await data.json();
-            console.log(res);
             throw new Error(res.error);
         }
     }

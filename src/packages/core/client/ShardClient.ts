@@ -4,7 +4,7 @@ import { PresenceOptions } from 'detritus-client-socket/lib/gateway';
 import { GameManager } from 'packages/game/GameManager';
 
 export class NovaShardClient extends ShardClient {
-    logger = new Logger('client');
+    logger = new Logger('nova');
     games: GameManager = new GameManager(this);
 
     setPresence(presence: PresenceOptions) {

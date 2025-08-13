@@ -14,13 +14,12 @@ if (!env.DISCORD_TOKEN) {
 const client = new NovaShardClient(env.DISCORD_TOKEN);
 const commands = new NovaInteractionCommandClient(client);
 const listeners = new CustomListenerHandler(client);
-client.on('gatewayReady', () => console.log('ready.'));
 
 async function start() {
     listeners.addHandler('commands', commands);
     await listeners.loadAll();
-    await client.run({ wait: true });
     await commands.addMultipleIn('./commands/');
+    await client.run({ wait: true });
     await commands.checkAndUploadCommands();
     await commands.run({ wait: true });
 }
