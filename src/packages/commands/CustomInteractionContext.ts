@@ -52,6 +52,16 @@ export class CustomContext<
         return emotes.default[emote];
     }
 
+    async success(
+        content: string,
+        options?: InteractionEditOrRespond,
+    ) {
+        return this.say(
+            `${this.emote('success')} ${content}`,
+            options,
+        );
+    }
+
     async error(error?: string) {
         return this.say(
             `${this.emote('error')} failed to run the command. ${error || ''}`,

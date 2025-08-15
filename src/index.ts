@@ -1,6 +1,7 @@
 import { NovaInteractionCommandClient } from '@nova/commands/InteractionCommandClient';
 import { NovaShardClient } from '@nova/core/client/ShardClient';
 import { CustomListenerHandler } from '@nova/listeners/ListenerHandler';
+import { GatewayIntents } from 'detritus-client/lib/constants';
 import { parseEnv } from 'packages/util/env';
 
 const env = parseEnv('./.env.local');
@@ -11,7 +12,14 @@ if (!env.DISCORD_TOKEN) {
     );
 }
 
-const client = new NovaShardClient(env.DISCORD_TOKEN);
+const client = new NovaShardClient(env.DISCORD_TOKEN, {
+    gateway: {
+        intents: [
+            GatewayIntents.MESSAGE_CONTENT,
+            GatewayIntents.GUILDS,
+        ],
+    },
+});
 const commands = new NovaInteractionCommandClient(client);
 const listeners = new CustomListenerHandler(client);
 
