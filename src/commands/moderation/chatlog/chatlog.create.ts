@@ -61,7 +61,6 @@ export class ChatlogCreateCommand extends SubCommand {
             i++;
         }
         const local = ctx.locale || ctx.guildLocale || 'en-US';
-        console.log(local);
         return ctx.success(
             `success! saved ${toStore.length} messages from ${channel}.`,
             {
@@ -73,7 +72,7 @@ export class ChatlogCreateCommand extends SubCommand {
                                 .reverse()
                                 .map(
                                     (data) =>
-                                        `[${data.webhook ? '$' : ''}][${data.created.toLocaleString(local)}] ${data.author}: ${data.content}`,
+                                        `[${data.webhook ? '🤖' : '👤'}][${data.created.toLocaleString(local)}] ${data.author}: ${data.content}`,
                                 )
                                 .join('\n'),
                         ),
