@@ -1232,7 +1232,7 @@ __metadata:
     prettier: "npm:3.6.2"
     prisma: "npm:^6.14.0"
     tsconfig-paths: "npm:^4.2.0"
-    typescript: "npm:^5.9.0-dev.20250706"
+    typescript: "npm:^5.9.2"
     typescript-eslint: "npm:^8.39.1"
     xml2js: "npm:^0.6.2"
   languageName: unknown
@@ -1556,23 +1556,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.9.0-dev.20250706":
-  version: 5.9.0-dev.20250718
-  resolution: "typescript@npm:5.9.0-dev.20250718"
+"typescript@npm:^5.9.2":
+  version: 5.9.2
+  resolution: "typescript@npm:5.9.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/65637dabd84aa0f9696656a77d07ef6d143856085eea23a094ca0092e49ee2858016f4817ca7dd795baa0ce04db0d5a585ba12979e8d586af0cf0256ccbcff10
+  checksum: 10c0/cd635d50f02d6cf98ed42de2f76289701c1ec587a363369255f01ed15aaf22be0813226bff3c53e99d971f9b540e0b3cc7583dbe05faded49b1b0bed2f638a18
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.9.0-dev.20250706#optional!builtin<compat/typescript>":
-  version: 5.9.0-dev.20250718
-  resolution: "typescript@patch:typescript@npm%3A5.9.0-dev.20250718#optional!builtin<compat/typescript>::version=5.9.0-dev.20250718&hash=5786d5"
+"typescript@patch:typescript@npm%3A^5.9.2#optional!builtin<compat/typescript>":
+  version: 5.9.2
+  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/f680e00bb9e574ed84f390130731e3f7235d04b24c03b557acde80d69ae9debf0674cfb8fb74a850c6cd75babe869864e6fd6dd494a5ae3f96d5a2ebef30f24b
+  checksum: 10c0/34d2a8e23eb8e0d1875072064d5e1d9c102e0bdce56a10a25c0b917b8aa9001a9cf5c225df12497e99da107dc379360bc138163c66b55b95f5b105b50578067e
   languageName: node
   linkType: hard
 
