@@ -10,7 +10,7 @@
   "scripts": {
     "rm": "rm -rf dist",
     "c": "clear",
-    "pre-build": "yarn c && yarn tsc",
+    "pre-build": "yarn c && ./node_modules/.bin/tsc",
     "build": "yarn rm  && yarn pre-build",
     "dev": "yarn build && yarn start",
     "check-commands": "TS_NODE_BASEURL=./dist/ node -r  tsconfig-paths/register dist/index.js --check-commands",

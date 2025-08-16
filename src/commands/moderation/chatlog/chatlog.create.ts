@@ -72,7 +72,7 @@ export class ChatlogCreateCommand extends SubCommand {
                                 .reverse()
                                 .map(
                                     (data) =>
-                                        `[${data.webhook ? '🤖' : '👤'}][${data.created.toLocaleString(local)}] ${data.author}: ${data.content}`,
+                                        `[${data.created.toLocaleString(local)}] ${data.author}: ${data.content}`,
                                 )
                                 .join('\n'),
                         ),
