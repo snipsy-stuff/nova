@@ -22,23 +22,33 @@ export class SheetManager {
         sheets: './data/sheets',
     };
 
+    async delete(character: string) {}
+
     async get(character: string) {
         const sheets = JSON.parse(
             await readFile('./data/sheets/index.json', {
                 encoding: 'utf-8',
             }),
-        ) as Record<string, string>;
+        ) as SheetIndexData[];
 
-        const path = sheets[character];
+        const path = sheets.find((char) => char.name === character);
         if (!path) {
             return null;
         }
-
+        console.log(path);
         const data = JSON.parse(
-            await readFile(path, 'utf-8'),
+            await readFile(path.path, 'utf-8'),
         ) as SheetData;
 
         return data;
+    }
+
+    async list() {
+        return JSON.parse(
+            await readFile('./data/sheets/index.json', {
+                encoding: 'utf-8',
+            }),
+        ) as SheetIndexData[];
     }
 
     async create(
@@ -49,7 +59,7 @@ export class SheetManager {
             await readFile('./data/sheets/index.json', {
                 encoding: 'utf-8',
             }),
-        );
+        ) as SheetIndexData[];
         const newname = generateRandomBase64(10).replaceAll('/', '');
         await this.unzip(filename, newname);
         const index = await this.parseIndex(newname);
@@ -89,7 +99,11 @@ export class SheetManager {
             }
             const shtdir = pth + '/sheet.json';
             await writeFile(shtdir, JSON.stringify(tosave, null, 2));
-            sheets[tosave.name.toLowerCase()] = shtdir;
+            sheets.push({
+                name: tosave.name,
+                path: shtdir,
+                player,
+            });
 
             await writeFile(
                 './data/sheets/index.json',
@@ -187,7 +201,6 @@ export class SheetManager {
         })[0];
 
         newData.personal = char.personal[0];
-        console.log('HEIGHT:', char.personal[0].charheight[0]);
         newData.personal.charheight = convertInchesTofeet(
             +char.personal[0].charheight[0].value,
         );
@@ -626,4 +639,10 @@ export class SheetManager {
 }
 function convertInchesTofeet(inches: number): string {
     return `${Math.floor(inches / 12)}'${inches % 12}"`;
+}
+
+interface SheetIndexData {
+    name: string;
+    path: string;
+    player: string;
 }

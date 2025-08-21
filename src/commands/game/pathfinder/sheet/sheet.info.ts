@@ -1,6 +1,7 @@
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { AutoComplete } from '@nova/commands/options/AutoComplete';
 import { SubCommand } from '@nova/commands/options/SubCommand';
+import { NovaShardClient } from '@nova/core/client/ShardClient';
 import { SheetData } from '@nova/typings/pathfinder/sheetdata';
 import { MessageComponentButtonStyles } from 'detritus-client/lib/constants';
 import {
@@ -18,25 +19,31 @@ const file = './data/sheets/index.json';
             .setName('character')
             .setDescription('the name of the character')
             .addAutoComplete(async (ctx) => {
-                const data = JSON.parse(
-                    await readFile(file, 'utf-8'),
-                );
+                const pf = (ctx.client as NovaShardClient).games
+                    .pathfinder;
 
-                const keys = Object.keys(data);
+                const names = await pf.sheets
+                    .list()
+                    .then((data) => data.map((d1) => d1.name));
+                console.log(names);
                 if (!ctx.value) {
                     return ctx.respond({
-                        choices: keys.map((k) => ({
+                        choices: names.map((k) => ({
                             name: k,
-                            value: data[k],
+                            value: k,
                         })),
                     });
                 }
                 return ctx.respond({
-                    choices: keys
-                        .filter((key) => key.includes(ctx.value))
+                    choices: names
+                        .filter((key) =>
+                            key
+                                .toLowerCase()
+                                .includes(ctx.value.toLowerCase()),
+                        )
                         .map((value) => ({
                             name: value,
-                            value: data[value],
+                            value: value,
                         })),
                 });
             }),
@@ -53,12 +60,11 @@ export class SheetInfoCommand extends SubCommand {
                 'could not parse character from sheet. does it even exist?!',
             );
         }
-        const character = JSON.parse(
-            await readFile(ctx.args.character, 'utf-8').catch(
-                () => 'null',
-            ),
-        ) as SheetData | 'null';
-        if (character === 'null') {
+        const character =
+            await ctx.client.games.pathfinder.sheets.get(
+                ctx.args.character,
+            );
+        if (!character) {
             return ctx.error(
                 'could not parse character from sheet. does it even exist?!',
             );
