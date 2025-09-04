@@ -30,6 +30,7 @@ async function start() {
     await commands.addMultipleIn('./commands/');
     await client.run({ wait: true });
     await commands.checkAndUploadCommands().catch((err) => {
+        console.error(JSON.stringify(err, null, 1));
         if (err.resposne.fetchResponse.status === 429) {
             return;
         }

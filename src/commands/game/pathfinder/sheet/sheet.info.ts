@@ -8,6 +8,8 @@ import { MessageComponentButtonStyles } from 'detritus-client/lib/constants';
 import {
     ComponentActionRow,
     ComponentButton,
+    ComponentSelectMenu,
+    ComponentSelectMenuOption,
     Embed,
 } from 'detritus-client/lib/utils';
 import { readFile } from 'node:fs/promises';
@@ -188,9 +190,28 @@ export class SheetInfoCommand extends SubCommand {
             customId: `skill.info:${context.userId}:${character.name}:spellsknown`,
             run: (ctx) => {
                 console.log('running');
-                const skills = character.spellsknown[0].spell;
+                const skills =
+                    character.spellsknown?.[0]?.spell ?? [];
                 const embeds: Embed[] = [];
                 let i = 0;
+                console.log(skills.length);
+                if (!skills.length) {
+                    return ctx.editOrRespond({
+                        embeds: [
+                            {
+                                description: 'no skills.',
+                            },
+                        ],
+                        components: [
+                            new ComponentActionRow().addButton(
+                                this.createBackButton(
+                                    context,
+                                    character,
+                                ),
+                            ),
+                        ],
+                    });
+                }
                 for (const skill of skills) {
                     embeds.push(
                         new Embed()
@@ -209,7 +230,51 @@ export class SheetInfoCommand extends SubCommand {
                             ),
                     );
                 }
+
                 console.log('yes');
+                const spells =
+                    skills.length >= 20
+                        ? skills.slice(0, 20)
+                        : skills;
+
+                const selectMenu = new ComponentSelectMenu({
+                    defaultValues: [],
+                    run: (ctx) => {
+                        const data = ctx.data.values?.[0] ?? '';
+                        const spell = spells.find(
+                            (spell) => spell.name === data,
+                        );
+                        if (!spell) throw null;
+                        return ctx.editOrRespond({
+                            embeds: [
+                                embeds.find(
+                                    (e) =>
+                                        e.author?.name ===
+                                        `${spell.name} [${spell.spellschool}]`,
+                                ) as Embed,
+                            ],
+                            components: [
+                                new ComponentActionRow().addButton(
+                                    this.createBackButton(
+                                        context,
+                                        character,
+                                    ),
+                                ),
+                            ],
+                        });
+                    },
+                });
+
+                for (const spell of spells) {
+                    selectMenu.addOption(
+                        new ComponentSelectMenuOption()
+                            .setLabel(
+                                `${spell.name} [${spell.subschooltext}]`,
+                            )
+                            .setValue(spell.name),
+                    );
+                }
+
                 const movebuttons = new ComponentActionRow()
                     .addButton(
                         new ComponentButton({
@@ -255,7 +320,12 @@ export class SheetInfoCommand extends SubCommand {
                     .editOrRespond({
                         embeds: [embeds[0]],
                         flags: 64,
-                        components: [movebuttons],
+                        components: [
+                            movebuttons,
+                            new ComponentActionRow().addSelectMenu(
+                                selectMenu,
+                            ),
+                        ],
                     })
                     .catch((e) =>
                         console.log(
