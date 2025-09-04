@@ -24,26 +24,28 @@ const file = './data/sheets/index.json';
 
                 const names = await pf.sheets
                     .list()
-                    .then((data) => data.map((d1) => d1.name));
+                    .then((data) =>
+                        data.map((d1) => ({ name: d1.name })),
+                    );
                 console.log(names);
                 if (!ctx.value) {
                     return ctx.respond({
                         choices: names.map((k) => ({
-                            name: k,
-                            value: k,
+                            name: k.name,
+                            value: k.name,
                         })),
                     });
                 }
                 return ctx.respond({
                     choices: names
                         .filter((key) =>
-                            key
+                            key.name
                                 .toLowerCase()
                                 .includes(ctx.value.toLowerCase()),
                         )
                         .map((value) => ({
-                            name: value,
-                            value: value,
+                            name: value.name,
+                            value: value.name,
                         })),
                 });
             }),
@@ -126,10 +128,6 @@ export class SheetInfoCommand extends SubCommand {
         if (character.image) {
             img = await readFile(character.image);
         }
-        ctx.client.logger.debug(
-            character.personal.charheight.toString(),
-            'CHAR_HEIGHT',
-        );
 
         const mainEmbed = new Embed()
             .setColor(0xcdccff)
@@ -149,6 +147,7 @@ export class SheetInfoCommand extends SubCommand {
             new ComponentActionRow(),
             new ComponentActionRow(),
             new ComponentActionRow(),
+            new ComponentActionRow(),
         ];
         utilityRow[0]
             .addButton(this.createAttributesButton(ctx, character))
@@ -164,6 +163,9 @@ export class SheetInfoCommand extends SubCommand {
             .addButton(this.createWeaponsButton(ctx, character))
             .addButton(this.createSavesButton(ctx, character))
             .addButton(this.createSpellButton(ctx, character));
+        utilityRow[3].addButton(
+            this.createSpellsKnownButton(ctx, character),
+        );
 
         const mainComponents = utilityRow;
 
@@ -172,6 +174,86 @@ export class SheetInfoCommand extends SubCommand {
             img,
             components: mainComponents,
         };
+    }
+
+    createSpellsKnownButton(
+        context: CustomContext<{ character: string }>,
+        character: SheetData,
+    ) {
+        return new ComponentButton({
+            label: 'spells',
+            customId: `skill.info:${context.userId}:${character.name}:spells`,
+            run: (ctx) => {
+                const skills = character.spellsknown[0].spell;
+                const embeds: Embed[] = [];
+                let i = 0;
+                for (const skill of skills) {
+                    embeds.push(
+                        new Embed()
+                            .setColor(0xcdccff)
+                            .setAuthor(
+                                `${skill.name} [${skill.spellschool}]`,
+                            )
+                            .setColor(0xccdccf)
+                            .setFooter(
+                                `requested by ${ctx.user.name}`,
+                            )
+                            .setDescription(
+                                skill.description
+                                    .replace(/\n\n/, '\n')
+                                    .slice(0, 2000),
+                            ),
+                    );
+                }
+
+                const movebuttons = new ComponentActionRow()
+                    .addButton(
+                        new ComponentButton({
+                            label: 'previous',
+                            customId: `skill.info:${context.userId}:${character.name}:spells:previous`,
+                            run: (ctx) => {
+                                if (i === 0) {
+                                    i = embeds.length - 1;
+                                } else {
+                                    i--;
+                                }
+                                return ctx.editOrRespond({
+                                    components: [movebuttons],
+                                    embeds: [embeds[i]],
+                                    flags: 64,
+                                });
+                            },
+                        }),
+                    )
+                    .addButton(
+                        new ComponentButton({
+                            label: 'next',
+                            customId: `skill.info:${context.userId}:${character.name}:spellsnext`,
+                            run: (ctx) => {
+                                if (i === embeds.length - 1) {
+                                    i = 0;
+                                } else {
+                                    i++;
+                                }
+                                return ctx.editOrRespond({
+                                    components: [movebuttons],
+                                    flags: 64,
+                                    embeds: [embeds[i]],
+                                });
+                            },
+                        }),
+                    )
+                    .addButton(
+                        this.createBackButton(context, character),
+                    );
+
+                return ctx.editOrRespond({
+                    embeds: [embeds[0]],
+                    flags: 64,
+                    components: [movebuttons],
+                });
+            },
+        });
     }
 
     createAttributesButton(

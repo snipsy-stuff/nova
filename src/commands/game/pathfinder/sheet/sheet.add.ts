@@ -58,10 +58,14 @@ export class SheetAddCommand extends SubCommand {
         const filecontent = Buffer.from(await data.arrayBuffer());
         const player = ctx.args.user?.id ?? ctx.user.id;
         await writeFile(dir, filecontent, { flag: 'w' });
-        const char = await ctx.client.games.pathfinder.sheets.create(
-            dir,
-            player,
-        );
+        const char = await ctx.client.games.pathfinder.sheets
+            .create(dir, player)
+            .catch((e) => {
+                if (e) {
+                    console.error(e);
+                }
+                return null;
+            });
         if (char === null) {
             return ctx.error('too many people to think about...!');
         }
@@ -95,21 +99,23 @@ export class SheetAddCommand extends SubCommand {
                 ].join('\n'),
             );
 
-        return ctx.say(
-            `✅ successfully created the ${char?.name} character sheet for ${!p ? 'the Dm' : p?.mention}.\nHere some basic info:`,
-            {
-                flags: MessageFlags.SUPPRESS_NOTIFICATIONS,
-                embeds: [embed],
-                files: img
-                    ? [
-                          {
-                              filename: 'image.png',
-                              value: img,
-                          },
-                      ]
-                    : undefined,
-            },
-        );
+        return ctx
+            .say(
+                `✅ successfully created the ${char?.name} character sheet for ${!p ? 'the Dm' : p?.mention}.\nHere some basic info:`,
+                {
+                    flags: MessageFlags.SUPPRESS_NOTIFICATIONS,
+                    embeds: [embed],
+                    files: img
+                        ? [
+                              {
+                                  filename: 'image.png',
+                                  value: img,
+                              },
+                          ]
+                        : undefined,
+                },
+            )
+            .catch(console.error);
     }
 
     /*async mkfile(filename: string) {

@@ -21,9 +21,6 @@ export class SheetManager {
         extracted: './data/extracted',
         sheets: './data/sheets',
     };
-
-    async delete(character: string) {}
-
     async get(character: string) {
         const sheets = JSON.parse(
             await readFile('./data/sheets/index.json', {
@@ -247,16 +244,19 @@ export class SheetManager {
                 .map((m) => m.text)
                 .join(', '),
         }));
-
-        newData.defensive = char.defensive.map((def) => {
-            // Defensive expects { special: DefensiveSpecial }
-            // If def.special is an array, take the first element or handle accordingly
-            return {
-                special: Array.isArray(def.special)
-                    ? def.special[0]
-                    : def.special,
-            };
-        });
+        if (Array.isArray(char.defensive)) {
+            newData.defensive = char.defensive.map((def) => {
+                // Defensive expects { special: DefensiveSpecial }
+                // If def.special is an array, take the first element or handle accordingly
+                return {
+                    special: Array.isArray(def.special)
+                        ? def.special[0]
+                        : def.special,
+                };
+            });
+        } else {
+            newData.defensive = [];
+        }
         if (Array.isArray(char.damagereduction)) {
             newData.damagereduction = char.damagereduction.map(
                 (def) => {
@@ -270,28 +270,38 @@ export class SheetManager {
                     return data;
                 },
             );
+        } else {
+            newData.damagereduction = [];
         }
-        newData.immunities = char.immunities.map((def) => {
-            const data: Record<string, any> = {};
-            for (const key of Object.keys(def)) {
-                data[key] = [];
-                for (const entry of def[key as 'special']) {
-                    data[key] = entry;
+        if (Array.isArray(char.immunities)) {
+            newData.immunities = char.immunities.map((def) => {
+                const data: Record<string, any> = {};
+                for (const key of Object.keys(def)) {
+                    data[key] = [];
+                    for (const entry of def[key as 'special']) {
+                        data[key] = entry;
+                    }
                 }
-            }
-            return data;
-        });
+                return data;
+            });
+        } else {
+            newData.immunities = [];
+        }
 
-        newData.resistances = char.resistances.map((def) => {
-            const data: Record<string, any> = {};
-            for (const key of Object.keys(def)) {
-                data[key] = [];
-                for (const entry of def[key as 'special']) {
-                    data[key] = entry;
+        if (Array.isArray(char.resistances)) {
+            newData.resistances = char.resistances.map((def) => {
+                const data: Record<string, any> = {};
+                for (const key of Object.keys(def)) {
+                    data[key] = [];
+                    for (const entry of def[key as 'special']) {
+                        data[key] = entry;
+                    }
                 }
-            }
-            return data;
-        });
+                return data;
+            });
+        } else {
+            newData.resistances = [];
+        }
         newData.weaknesses = this.simplifyJson(char.weaknesses);
         newData.armorclass = char.armorclass[0];
         newData.penalties = char.penalties[0].penalty;
@@ -367,13 +377,13 @@ export class SheetManager {
                     damage: weapon.damage,
                     useradded: weapon.useradded,
                     quantity: +weapon.quantity,
-                    weight: +weapon.weight[0].value,
-                    cost: +weapon.cost[0].value,
+                    weight: +weapon.weight?.[0]?.value,
+                    cost: +weapon.cost?.[0]?.value,
                     description: weapon.description,
                     wepcategory: weapon.wepcategory,
                     weptype: weapon.weptype,
                     situationalmodifiers:
-                        weapon.situationalmodifiers.map(
+                        weapon.situationalmodifiers?.map(
                             (m) => m.text,
                         ),
 
@@ -392,14 +402,14 @@ export class SheetManager {
                     damage: weapon.damage,
                     quantity: +weapon.quantity,
                     rangedattack: weapon.rangedattack,
-                    weight: +weapon.weight[0].value,
-                    cost: +weapon.cost[0].value,
+                    weight: +weapon.weight?.[0]?.value,
+                    cost: +weapon.cost?.[0]?.value,
                     description: weapon.description,
                     itempower: weapon.itempower,
                     wepcategory: weapon.wepcategory,
                     weptype: weapon.weptype,
                     situationalmodifiers:
-                        weapon.situationalmodifiers.map(
+                        weapon.situationalmodifiers?.map(
                             (m) => m.text,
                         ),
                 });
@@ -419,8 +429,8 @@ export class SheetManager {
                         natural: armor.natural === 'yes',
                         useradded: armor.useradded === 'yes',
                         quantity: +armor.quantity,
-                        weight: +armor.weight[0].value,
-                        cost: +armor.cost[0].value,
+                        weight: +armor.weight?.[0]?.value,
+                        cost: +armor.cost?.[0]?.value,
                         description: armor.description,
                     });
                 }
@@ -439,8 +449,8 @@ export class SheetManager {
                     newData.items[key].push({
                         name: item.name,
                         quantity: +item.quantity,
-                        weight: +item.weight[0].value,
-                        cost: +item.cost[0].value,
+                        weight: +item.weight?.[0]?.value,
+                        cost: +item.cost?.[0]?.value,
                         description: item.description,
                         itemslot: item.itemslot,
                         itempower: item.itempower,
@@ -455,8 +465,8 @@ export class SheetManager {
                 newData.gear.push({
                     name: item.name,
                     quantity: +item.quantity,
-                    weight: +item.weight[0].value,
-                    cost: +item.cost[0].value,
+                    weight: +item.weight?.[0]?.value,
+                    cost: +item.cost?.[0]?.value,
                     description: item.description,
                 });
             }

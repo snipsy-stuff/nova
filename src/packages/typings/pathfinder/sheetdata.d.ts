@@ -1,3 +1,5 @@
+import { Spellsknown } from './other-info';
+
 export interface SheetData {
     program: Program;
     name: string;
@@ -57,7 +59,7 @@ export interface SheetData {
     spelllike: Spelllike;
     trackedresources: Trackedresource[];
     specials: AttackSpecial[];
-    spellsknown: string;
+    spellsknown: Spellsknown[];
     spellsmemorized: Spellsmemorized[];
     spellbook: string;
     spellclasses: Spellclass[];
