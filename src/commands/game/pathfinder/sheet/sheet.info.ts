@@ -2,11 +2,18 @@ import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { AutoComplete } from '@nova/commands/options/AutoComplete';
 import { SubCommand } from '@nova/commands/options/SubCommand';
 import { NovaShardClient } from '@nova/core/client/ShardClient';
+import { Spellsubschool } from '@nova/typings/pathfinder/other-info';
 import { SheetData } from '@nova/typings/pathfinder/sheetdata';
-import { MessageComponentButtonStyles } from 'detritus-client/lib/constants';
+import {
+    MessageComponentButtonStyles,
+    MessageComponentDefaultValueTypes,
+} from 'detritus-client/lib/constants';
 import {
     ComponentActionRow,
     ComponentButton,
+    ComponentSelectMenu,
+    ComponentSelectMenuDefaultValue,
+    ComponentSelectMenuOption,
     Embed,
 } from 'detritus-client/lib/utils';
 import { readFile } from 'node:fs/promises';
@@ -184,6 +191,7 @@ export class SheetInfoCommand extends SubCommand {
             label: 'spells',
             customId: `skill.info:${context.userId}:${character.name}:spells`,
             run: (ctx) => {
+                console.log('running');
                 const skills = character.spellsknown[0].spell;
                 const embeds: Embed[] = [];
                 let i = 0;
@@ -205,53 +213,87 @@ export class SheetInfoCommand extends SubCommand {
                             ),
                     );
                 }
+                const spells =
+                    skills.length >= 25
+                        ? skills
+                        : skills.slice(0, 25);
+                console.log('yes');
+                try {
+                    const def = new ComponentSelectMenuDefaultValue({
+                        id: 'test',
+                        type: MessageComponentDefaultValueTypes.USER,
+                    });
+                    const dropdown: ComponentSelectMenu =
+                        new ComponentSelectMenu()
+                            .setCustomId('test')
+                            .setPlaceholder('nothing')
+                            .setMaxValues(1)
+                            .setMinValues(1)
+                            .addDefaultValue(def);
 
-                const movebuttons = new ComponentActionRow()
-                    .addButton(
-                        new ComponentButton({
-                            label: 'previous',
-                            customId: `skill.info:${context.userId}:${character.name}:spells:previous`,
-                            run: (ctx) => {
-                                if (i === 0) {
-                                    i = embeds.length - 1;
-                                } else {
-                                    i--;
-                                }
-                                return ctx.editOrRespond({
-                                    components: [movebuttons],
-                                    embeds: [embeds[i]],
-                                    flags: 64,
-                                });
-                            },
-                        }),
-                    )
-                    .addButton(
-                        new ComponentButton({
-                            label: 'next',
-                            customId: `skill.info:${context.userId}:${character.name}:spellsnext`,
-                            run: (ctx) => {
-                                if (i === embeds.length - 1) {
-                                    i = 0;
-                                } else {
-                                    i++;
-                                }
-                                return ctx.editOrRespond({
-                                    components: [movebuttons],
-                                    flags: 64,
-                                    embeds: [embeds[i]],
-                                });
-                            },
-                        }),
-                    )
-                    .addButton(
-                        this.createBackButton(context, character),
-                    );
+                    for (const spell of spells) {
+                        dropdown.addOption(
+                            new ComponentSelectMenuOption()
+                                .setLabel(spell.name)
+                                .setValue(spell.name)
+                                .setDefault(true),
+                        );
+                    }
+                    console.log('yes2');
+                    const movebuttons = new ComponentActionRow()
+                        .addButton(
+                            new ComponentButton({
+                                label: 'previous',
+                                customId: `skill.info:${context.userId}:${character.name}:spells:previous`,
+                                run: (ctx) => {
+                                    if (i === 0) {
+                                        i = embeds.length - 1;
+                                    } else {
+                                        i--;
+                                    }
+                                    return ctx.editOrRespond({
+                                        components: [movebuttons],
+                                        embeds: [embeds[i]],
+                                        flags: 64,
+                                    });
+                                },
+                            }),
+                        )
+                        .addButton(
+                            new ComponentButton({
+                                label: 'next',
+                                customId: `skill.info:${context.userId}:${character.name}:spellsnext`,
+                                run: (ctx) => {
+                                    if (i === embeds.length - 1) {
+                                        i = 0;
+                                    } else {
+                                        i++;
+                                    }
+                                    return ctx.editOrRespond({
+                                        components: [movebuttons],
+                                        flags: 64,
+                                        embeds: [embeds[i]],
+                                    });
+                                },
+                            }),
+                        )
+                        .addButton(
+                            this.createBackButton(context, character),
+                        );
 
-                return ctx.editOrRespond({
-                    embeds: [embeds[0]],
-                    flags: 64,
-                    components: [movebuttons],
-                });
+                    return ctx.editOrRespond({
+                        embeds: [embeds[0]],
+                        flags: 64,
+                        components: [
+                            movebuttons,
+                            /* new ComponentActionRow().addComponent(
+                            dropdown,
+                        ),*/
+                        ],
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
             },
         });
     }
