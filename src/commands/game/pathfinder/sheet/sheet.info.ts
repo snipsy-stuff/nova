@@ -13,7 +13,6 @@ import {
     Embed,
 } from 'detritus-client/lib/utils';
 import { readFile } from 'node:fs/promises';
-const file = './data/sheets/index.json';
 @SubCommand.applyOptions({
     name: 'info',
     description: 'information about a character sheet.',
@@ -30,7 +29,7 @@ const file = './data/sheets/index.json';
                     .then((data) =>
                         data.map((d1) => ({ name: d1.name })),
                     );
-                console.log(names);
+
                 if (!ctx.value) {
                     return ctx.respond({
                         choices: names.map((k) => ({
@@ -189,12 +188,11 @@ export class SheetInfoCommand extends SubCommand {
             label: 'spells',
             customId: `skill.info:${context.userId}:${character.name}:spellsknown`,
             run: (ctx) => {
-                console.log('running');
                 const skills =
                     character.spellsknown?.[0]?.spell ?? [];
                 const embeds: Embed[] = [];
                 let i = 0;
-                console.log(skills.length);
+
                 if (!skills.length) {
                     return ctx.editOrRespond({
                         embeds: [
@@ -231,50 +229,10 @@ export class SheetInfoCommand extends SubCommand {
                     );
                 }
 
-                console.log('yes');
                 const spells =
                     skills.length >= 20
                         ? skills.slice(0, 20)
                         : skills;
-
-                const selectMenu = new ComponentSelectMenu({
-                    defaultValues: [],
-                    run: (ctx) => {
-                        const data = ctx.data.values?.[0] ?? '';
-                        const spell = spells.find(
-                            (spell) => spell.name === data,
-                        );
-                        if (!spell) throw null;
-                        return ctx.editOrRespond({
-                            embeds: [
-                                embeds.find(
-                                    (e) =>
-                                        e.author?.name ===
-                                        `${spell.name} [${spell.spellschool}]`,
-                                ) as Embed,
-                            ],
-                            components: [
-                                new ComponentActionRow().addButton(
-                                    this.createBackButton(
-                                        context,
-                                        character,
-                                    ),
-                                ),
-                            ],
-                        });
-                    },
-                });
-
-                for (const spell of spells) {
-                    selectMenu.addOption(
-                        new ComponentSelectMenuOption()
-                            .setLabel(
-                                `${spell.name} [${spell.subschooltext}]`,
-                            )
-                            .setValue(spell.name),
-                    );
-                }
-
                 const movebuttons = new ComponentActionRow()
                     .addButton(
                         new ComponentButton({
@@ -315,6 +273,44 @@ export class SheetInfoCommand extends SubCommand {
                     .addButton(
                         this.createBackButton(context, character),
                     );
+
+                const selectMenu = new ComponentSelectMenu({
+                    // defaultValues: [],
+                    run: (ctx) => {
+                        const data = ctx.data.values?.[0] ?? '';
+                        const spell = spells.find(
+                            (spell) => spell.name === data,
+                        );
+                        if (!spell) throw null;
+                        return ctx.editOrRespond({
+                            embeds: [
+                                embeds.find(
+                                    (e) =>
+                                        e.author?.name ===
+                                        `${spell.name} [${spell.spellschool}]`,
+                                ) as Embed,
+                            ],
+                            components: [
+                                new ComponentActionRow().addButton(
+                                    this.createBackButton(
+                                        context,
+                                        character,
+                                    ),
+                                ),
+                            ],
+                        });
+                    },
+                });
+
+                for (const spell of spells) {
+                    selectMenu.addOption(
+                        new ComponentSelectMenuOption()
+                            .setLabel(
+                                `${spell.name} [${spell.subschooltext}]`,
+                            )
+                            .setValue(spell.name),
+                    );
+                }
 
                 return ctx
                     .editOrRespond({
@@ -711,7 +707,6 @@ export class SheetInfoCommand extends SubCommand {
                                         ),
                                     );
 
-                                console.log('running');
                                 return ctx2.editOrRespond({
                                     embeds: [em],
                                     flags: 64,
@@ -782,7 +777,6 @@ export class SheetInfoCommand extends SubCommand {
                             label: 'previous',
                             customId: `skill.info:${context.userId}:${character.name}:weapons:previous`,
                             run: (ctx) => {
-                                console.log('run2');
                                 if (i === 0) {
                                     i = embeds.length - 1;
                                 } else {
@@ -807,7 +801,6 @@ export class SheetInfoCommand extends SubCommand {
                             label: 'next',
                             customId: `skill.info:${context.userId}:${character.name}:weapons:next`,
                             run: (ctx) => {
-                                console.log('run');
                                 if (i === embeds.length - 1) {
                                     i = 0;
                                 } else {

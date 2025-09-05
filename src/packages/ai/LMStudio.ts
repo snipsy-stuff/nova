@@ -53,7 +53,6 @@ Total response should stay below 2000 Characters, cut appropriately before.
         );
         if (data.ok) {
             const data2 = await data.json();
-            console.log(data2);
             return data2.choices[0].message.content.split('%%%%');
         } else {
             const res = await data.json();

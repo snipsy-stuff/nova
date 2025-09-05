@@ -662,9 +662,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detritus-client@npm:0.17.0-beta.85":
-  version: 0.17.0-beta.85
-  resolution: "detritus-client@npm:0.17.0-beta.85"
+"detritus-client@npm:0.17.0-beta.88":
+  version: 0.17.0-beta.88
+  resolution: "detritus-client@npm:0.17.0-beta.88"
   dependencies:
     detritus-client-rest: "npm:^0.11.0-beta.20"
     detritus-client-socket: "npm:^0.9.0-beta.5"
@@ -680,7 +680,7 @@ __metadata:
       optional: true
     opusscript:
       optional: true
-  checksum: 10c0/5e8ff64bbb272222bbdfc357653a3a3b20f1cfa870ca17bf4103cd73a54dda3ef79bb4c70518dcb195a90b79d6c6c5b0bc50d7df1858810f07026e16e34dfe09
+  checksum: 10c0/2e93967638e0bb909e67d0c114bb8a180d1d1d4312b906a328e716d5971c0da361877c237189a6b62c0f67896d836b7f11ecc1b6db7543f40917847815d91038
   languageName: node
   linkType: hard
 
@@ -1229,7 +1229,7 @@ __metadata:
     "@eslint/js": "npm:^9.33.0"
     "@types/node": "npm:^24.2.1"
     "@types/xml2js": "npm:^0"
-    detritus-client: "npm:0.17.0-beta.85"
+    detritus-client: "npm:0.17.0-beta.88"
     eslint: "npm:^9.33.0"
     prettier: "npm:3.6.2"
     prisma: "npm:^6.14.0"

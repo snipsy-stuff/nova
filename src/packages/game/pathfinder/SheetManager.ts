@@ -32,7 +32,6 @@ export class SheetManager {
         if (!path) {
             return null;
         }
-        console.log(path);
         const data = JSON.parse(
             await readFile(path.path, 'utf-8'),
         ) as SheetData;
