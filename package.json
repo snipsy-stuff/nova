@@ -3,7 +3,7 @@
   "description": "nova a ''easy-to-use'' Discord bot.",
   "packageManager": "yarn@4.9.2",
   "dependencies": {
-    "detritus-client": "0.17.0-beta.85",
+    "detritus-client": "0.17.0-beta.89",
     "tsconfig-paths": "^4.2.0",
     "xml2js": "^0.6.2"
   },
