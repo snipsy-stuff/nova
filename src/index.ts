@@ -1,7 +1,6 @@
 import { NovaInteractionCommandClient } from '@nova/commands/InteractionCommandClient';
 import { NovaShardClient } from '@nova/core/client/ShardClient';
 import { CustomListenerHandler } from '@nova/listeners/ListenerHandler';
-import { error } from 'console';
 import { GatewayIntents } from 'detritus-client/lib/constants';
 import { parseEnv } from 'packages/util/env';
 
@@ -31,7 +30,7 @@ async function start() {
     await client.run({ wait: true });
     await commands.checkAndUploadCommands().catch((err) => {
         console.error(JSON.stringify(err, null, 1));
-        if (err.resposne.fetchResponse.status === 429) {
+        if (err.response.fetchResponse.status === 429) {
             return;
         }
         throw err;
