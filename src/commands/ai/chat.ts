@@ -1,6 +1,7 @@
 import { CustomCommand } from '@nova/commands/CustomCommand';
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { StringOption } from '@nova/commands/options/StringOption';
+import { Embed } from 'detritus-client/lib/utils';
 import { LmStudio } from 'packages/ai/LMStudio';
 const models = {
     gpt4: 'openai/gpt-oss-20b',
@@ -37,7 +38,7 @@ export default class AIChatCommand extends CustomCommand {
         const dice = ctx.args.model;
 
         const ai = new LmStudio();
-        await ctx.say('thinking...', { flags: 64 });
+        await ctx.say('thinking...');
         const data = await ai.chat(dice, ctx.args.text, ctx.user);
         console.log(
             `${ctx.user.username} requested to know: ${ctx.args.text}`,
@@ -45,7 +46,12 @@ export default class AIChatCommand extends CustomCommand {
         console.log(`resukt; ${data}`);
         console.log(typeof data, data.length);
         const response = data[data.length - 1] || data[0];
-        return ctx.say(response.replaceAll('%', ''), { flags: 64 });
+        const embed = new Embed()
+            .setAuthor(
+                `${ctx.user.name}'s question: ${ctx.args.text}`,
+            )
+            .setDescription(response.replaceAll('%', 'sa'));
+        return ctx.send({ embeds: [embed] });
     }
 }
 type ValueOf<T> = T[keyof T];

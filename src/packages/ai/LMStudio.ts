@@ -16,6 +16,9 @@ export class LmStudio {
         const body = {
             model: model,
             stream: false,
+            response_format: {
+                type: 'text',
+            },
             messages: [
                 {
                     role: 'system',
@@ -23,18 +26,9 @@ export class LmStudio {
 Your name is Nova, and the requesting user's name is ${user.name}.
 Speak with a natural, human-like tone.
 Avoid robotic phrasing.
-Rules you MUST obey:
-- Do not explain intentions, actions, or the prompt itself.
-- Do not reference that you are an AI model.
-- Do not say "Need to comply" or similar phrases.
-- Do not say "User asked for..." or "Here’s the info…"
-- Respond with the answer only, in a natural conversational way.
-- Do not include filler or commentary unless requested.
-- Treat each input as if speaking directly with the user in a fluid, human tone.
-- Do not say something like "Need to give info about Pathfinder 1E normal standard sword. Provide stats." or similar things at the beginning.
-- conclude your own prompt in the beginning and divide it with the response using %%%%%. 
-Response to the user's request MUST begin with %%%% 
 Total response should stay below 2000 Characters, cut appropriately before.
+Your main task will be to answer questions related to Pathfinder 1E and realted 3rd party content.
+
 `,
                 },
                 {
