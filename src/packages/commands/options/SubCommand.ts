@@ -23,7 +23,7 @@ export abstract class SubCommand extends Interaction.InteractionCommandOption {
                         );
                 }
             }
-            console.error(JSON.stringify(error, null, 2));
+            console.log(error);
             return ctx.error(
                 'Could not run command for unknown reasons. please try again later',
             );

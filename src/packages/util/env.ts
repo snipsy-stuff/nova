@@ -9,6 +9,7 @@ interface Env {
     COMMAND_LOG_CHANNEL: string;
     ERROR_LOG_CHANNEL: string;
     JOIN_LOG_CHANNEL: string;
+    GITHUB_TOKEN: string;
 }
 /**
  *
@@ -31,6 +32,7 @@ export function parseEnv(filePath = './.env.local'): Env {
                     COMMAND_LOG_CHANNEL: '',
                     ERROR_LOG_CHANNEL: '',
                     JOIN_LOG_CHANNEL: '',
+                    GITHUB_TOKEN: '',
                 };
             }
         } else {
