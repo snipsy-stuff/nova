@@ -14,6 +14,10 @@ const models = {
     description: 'chat with an ai.',
     options: [
         new StringOption()
+            .setName('text')
+            .setRequired(true)
+            .setDescription('the text to ask'),
+        new StringOption()
             .setName('model')
             .setChoices(
                 Object.entries(models).map((model) => ({
@@ -22,10 +26,6 @@ const models = {
                 })),
             )
             .setDescription('model to choose.'),
-        new StringOption()
-            .setName('text')
-            .setRequired(true)
-            .setDescription('the text to ask'),
     ],
 })
 export default class AIChatCommand extends CustomCommand {
