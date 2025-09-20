@@ -28,7 +28,7 @@ Speak with a natural, human-like tone.
 Avoid robotic phrasing.
 Total response should stay below 2000 Characters, cut appropriately before.
 Your main task will be to answer questions related to Pathfinder 1E and realted 3rd party content.
-
+Please format the response so it is only using Discord's markdown as formatting.
 `,
                 },
                 {
@@ -37,8 +37,9 @@ Your main task will be to answer questions related to Pathfinder 1E and realted 
                 },
             ],
         };
+
         const data = await fetch(
-            'http://192.168.56.1:1234/v1/chat/completions',
+            'http://lmstudio.local:1234/v1/chat/completions',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
