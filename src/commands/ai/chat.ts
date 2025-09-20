@@ -24,6 +24,7 @@ const models = {
             .setDescription('model to choose.'),
         new StringOption()
             .setName('text')
+            .setRequired(true)
             .setDescription('the text to ask'),
     ],
 })
