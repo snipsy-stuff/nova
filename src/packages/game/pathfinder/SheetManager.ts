@@ -71,7 +71,18 @@ export class SheetManager {
             // ask player what to import or all
             return null;
         } else {
-            const character = chars[0].character[0];
+            const character = chars[0]?.character[0];
+
+            if (
+                sheets.find(
+                    (s) =>
+                        s.name === character.name &&
+                        (s.player === player ||
+                            s.player === character.playername),
+                )
+            ) {
+                throw new Error('NAME_ALREADY_EXISTS');
+            }
             const tosave = await this.parseCharacter(
                 newname,
                 character,
@@ -99,6 +110,7 @@ export class SheetManager {
                 name: tosave.name,
                 path: shtdir,
                 player,
+                por: filename,
             });
 
             await writeFile(
@@ -114,7 +126,10 @@ export class SheetManager {
         filename: string,
         char2: CharacterCharacter,
     ): Promise<SheetData> {
-        const statblock = char2.statblocks[0].statblock[2]; // chjeck for xml
+        const statblock = char2.statblocks[0]?.statblock[2]; // chjeck for xml
+        if (!statblock) {
+            throw new Error('cannot parse file.');
+        }
         const file = await readFile(
             `${this.paths.extracted}/${
                 filename
@@ -130,6 +145,14 @@ export class SheetManager {
         newData.program = this.simplifyJson(jsonData.program[0]);
         //TODO: check for multiple characters
         const char = jsonData.character[0];
+        if (!char) {
+            throw new Error('no character found.');
+        }
+
+        if (char.classes[0].level === '0') {
+            throw new Error('NO_CLASSES');
+        }
+        console.log(char.classes);
         newData.name = char.name;
         newData.active = char.active === 'yes';
         newData.player = char.playername;
@@ -141,36 +164,38 @@ export class SheetManager {
         newData.relationship = char.relationship;
         newData.type = char.type;
         newData.race = {
-            name: char.race[0].name,
-            ethnicity: char.race[0].ethnicity || 'None',
+            name: char.race[0]?.name,
+            ethnicity: char.race[0]?.ethnicity || 'None',
         };
-        newData.size = +char.size[0].space[0].value; // in feet
-        newData.deity = char.deity[0].name;
-        newData.level = +char.classes[0].level;
-        newData.classes = char.classes[0].class.map((cls) => ({
-            name: cls.name,
-            level: +cls.level,
-            spells: cls.spells,
-            casterlevel: +cls.casterlevel,
-            concentrationcheck: cls.concentrationcheck,
-            overcomespellresistance: cls.overcomespellresistance,
-            basespelldc: +cls.basespelldc,
-            castersource: cls.castersource,
-            arcanespellfailure: cls.arcanespellfailure?.map(
-                (failure) => +failure.value / 100,
-            ),
-        }));
+        newData.size = +char.size[0]?.space[0]?.value; // in feet
+        newData.deity = char.deity[0]?.name;
+        newData.level = +char.classes[0]?.level;
+        newData.classes = (char.classes[0]?.class || []).map(
+            (cls) => ({
+                name: cls.name,
+                level: +cls.level,
+                spells: cls.spells,
+                casterlevel: +cls.casterlevel,
+                concentrationcheck: cls.concentrationcheck,
+                overcomespellresistance: cls.overcomespellresistance,
+                basespelldc: +cls.basespelldc,
+                castersource: cls.castersource,
+                arcanespellfailure: cls.arcanespellfailure?.map(
+                    (failure) => +failure.value / 100,
+                ),
+            }),
+        );
         newData.factions = char.factions;
-        newData.body = char.types[0].type[0].name;
-        newData.subbodies = char.subtypes[0].subtype.map(
+        newData.body = char.types[0]?.type[0]?.name;
+        newData.subbodies = char.subtypes[0]?.subtype.map(
             (t) => t.name,
         );
-        newData.heropoint = +char.heropoints[0].total;
+        newData.heropoint = +char.heropoints[0]?.total;
         newData.senses = char.senses;
         newData.auras = char.auras;
         if (char.favoredclasses) {
             newData.favoredclass =
-                char.favoredclasses[0].favoredclass[0].name;
+                char.favoredclasses[0]?.favoredclass[0]?.name;
         }
         newData.health = char.health.map((entry) => {
             const cleanedEntry: Record<string, string | number> = {};
@@ -183,7 +208,7 @@ export class SheetManager {
             }
             return cleanedEntry;
         })[0];
-        newData.xp = +char.xp[0].total;
+        newData.xp = +char.xp[0]?.total;
         newData.money = char.money.map((entry) => {
             const cleanedEntry: Record<string, string | number> = {};
             for (const [key, value] of Object.entries(entry)) {
@@ -198,14 +223,14 @@ export class SheetManager {
 
         newData.personal = char.personal[0];
         newData.personal.charheight = convertInchesTofeet(
-            +char.personal[0].charheight[0].value,
+            +char.personal[0]?.charheight[0]?.value,
         );
         newData.personal.charweight =
-            +char.personal[0].charweight[0].value;
-        newData.languages = char.languages[0].language.map(
+            +char.personal[0]?.charweight[0]?.value;
+        newData.languages = char.languages[0]?.language.map(
             (l) => l.name,
         );
-        newData.attributes = char.attributes[0].attribute.map(
+        newData.attributes = char.attributes[0]?.attribute.map(
             (at) => ({
                 name: at.name,
                 value: at.attrvalue[0],
@@ -221,7 +246,7 @@ export class SheetManager {
             }),
         );
 
-        newData.saves = char.saves[0].save.map((at) => ({
+        newData.saves = char.saves[0]?.save.map((at) => ({
             name: at.name,
             abbr: at.abbr,
             save: +at.save,
@@ -234,7 +259,7 @@ export class SheetManager {
                 .join(', '),
         }));
 
-        newData.allsaves = char.saves[0].allsaves.map((save) => ({
+        newData.allsaves = char.saves[0]?.allsaves.map((save) => ({
             save: +save.save,
             base: +save.base,
             fromresist: save.fromresist,
@@ -303,17 +328,17 @@ export class SheetManager {
         }
         newData.weaknesses = this.simplifyJson(char.weaknesses);
         newData.armorclass = char.armorclass[0];
-        newData.penalties = char.penalties[0].penalty;
+        newData.penalties = char.penalties[0]?.penalty;
         newData.maneuvers = char.maneuvers;
         newData.initiative = char.initiative[0];
         newData.movement = {
-            speed: +char.movement[0].speed[0].value,
-            base: +char.movement[0].basespeed[0].value,
+            speed: +char.movement[0]?.speed[0]?.value,
+            base: +char.movement[0]?.basespeed[0]?.value,
         };
 
         newData.encumbrance = char.encumbrance[0];
 
-        newData.skills = char.skills[0].skill.map((skill) => ({
+        newData.skills = char.skills[0]?.skill.map((skill) => ({
             ...skill,
             name: skill.name,
             ranks: +skill.ranks,
@@ -331,7 +356,7 @@ export class SheetManager {
             usable: skill.usable === 'yes',
         }));
         newData.skillabilities = char.skillabilities;
-        newData.feats = char.feats[0].feat.map((feat) => ({
+        newData.feats = char.feats[0]?.feat.map((feat) => ({
             ...feat,
             name: feat.name,
             categorytext: feat.categorytext,
@@ -340,7 +365,7 @@ export class SheetManager {
             description: feat.description,
             featcategory: feat.featcategory,
         }));
-        newData.traits = char.traits[0].trait.map((trait) => ({
+        newData.traits = char.traits[0]?.trait.map((trait) => ({
             ...trait,
             name: trait.name,
             categorytext: trait.categorytext,
@@ -348,7 +373,7 @@ export class SheetManager {
             traitcategory: trait.traitcategory,
         }));
 
-        newData.flaws = char.flaws[0].flaw.map((flaw) => ({
+        newData.flaws = char.flaws[0]?.flaw.map((flaw) => ({
             ...flaw,
             name: flaw.name,
             description: flaw.description,
@@ -654,4 +679,5 @@ interface SheetIndexData {
     name: string;
     path: string;
     player: string;
+    por: string;
 }
