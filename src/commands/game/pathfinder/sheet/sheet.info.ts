@@ -32,10 +32,12 @@ import { readFile } from 'node:fs/promises';
 
                 if (!ctx.value) {
                     return ctx.respond({
-                        choices: names.map((k) => ({
-                            name: k.name,
-                            value: k.name,
-                        })),
+                        choices: names
+                            .map((k) => ({
+                                name: k.name,
+                                value: k.name,
+                            }))
+                            .slice(0, 15),
                     });
                 }
                 return ctx.respond({
@@ -48,7 +50,8 @@ import { readFile } from 'node:fs/promises';
                         .map((value) => ({
                             name: value.name,
                             value: value.name,
-                        })),
+                        }))
+                        .slice(0, 15),
                 });
             }),
     ],
