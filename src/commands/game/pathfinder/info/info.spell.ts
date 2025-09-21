@@ -11,24 +11,26 @@ const spells = JSON.parse(
 
 @SubCommand.applyOptions({
     name: 'spell',
-    description: 'getting information of a spell',
+    description: 'getting information of a spell. ',
     options: [
         new AutoComplete()
             .setName('name')
             .setDescription('the name of the skill')
             .addAutoComplete(async (ctx) => {
-                const names = spells.map((spell) => ({
-                    name: spell.name,
-                    level: spell.level,
-                    class: spell.class,
-                }));
+                const names = spells
+                    .map((spell) => ({
+                        name: spell.name,
+                        level: +spell.level,
+                        class: spell.class,
+                    }))
+                    .sort((a, b) => a.level - b.level);
                 if (!ctx.value) {
                     return ctx
                         .respond({
                             choices: names
-                                .map((k) => ({
-                                    name: `${k.name} ${k.level}  (${k.class})`,
-                                    value: k.name,
+                                .map((value) => ({
+                                    name: `${value.name} ${value.level}  (${value.class})`,
+                                    value: value.name,
                                 }))
                                 .slice(0, 15),
                         })
@@ -80,7 +82,8 @@ export class SpellInfoCommand extends SubCommand {
                         `Information about ${ctx.args.name} (Level: ${spell.level}, ${spell.class})`,
                     )
                     .setDescription(description.join('\n'))
-                    .setColor(0xcdccff),
+                    .setColor(0xcdccff)
+                    .setFooter('*currently only oracle spells*'),
             ],
         });
     }
