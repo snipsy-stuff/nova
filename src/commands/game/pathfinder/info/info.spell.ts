@@ -64,7 +64,11 @@ export class SpellInfoCommand extends SubCommand {
         if (!spell) {
             return ctx.error('could not find spell.');
         }
-
+        const descr =
+            spell.description.length >= 1901
+                ? spell.description.slice(0, 1900) +
+                  `\n[text too long. more info here](https://github.com/snipsy-stuff/data/blob/main/docs/${spell.class.toLowerCase()}/${spell.name.replace('/', '-')}.md)`
+                : spell.description;
         const description = [
             `**Casting time**: ${spell.casttime}`,
             `**Range**: ${spell.range}`,
@@ -75,7 +79,7 @@ export class SpellInfoCommand extends SubCommand {
             Array.isArray(spell.spellcomp)
                 ? `**Components**: ${spell.spellcomp.map((sp) => sp).join(', ')}`
                 : `**Component**:${spell.spellcomp}` || '',
-            spell.description.slice(0, 1900),
+            descr,
         ].filter((v) => !!v);
 
         return ctx.send({

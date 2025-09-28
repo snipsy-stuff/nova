@@ -2,6 +2,8 @@ import { RootCommand } from '@nova/commands/RootCommand';
 
 @RootCommand.applyOptions({
     name: 'dm',
-    description: '',
+    description: 'dm helper',
 })
-export default class DungeonMasterCommand extends RootCommand {}
+export default class DungeonMasterCommand extends RootCommand {
+    run() {}
+}
