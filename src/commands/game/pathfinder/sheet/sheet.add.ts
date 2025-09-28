@@ -3,10 +3,12 @@ import { BooleanOption } from '@nova/commands/options/BooleanOption';
 import { FileOption } from '@nova/commands/options/FileOption';
 import { SubCommand } from '@nova/commands/options/SubCommand';
 import { UserOption } from '@nova/commands/options/UserOption';
+import { CustomError } from '@nova/core/errors';
+import { SheetData } from '@nova/typings/pathfinder/sheetdata';
 import { MessageFlags } from 'detritus-client/lib/constants';
 import { Attachment, User } from 'detritus-client/lib/structures';
 import { Embed } from 'detritus-client/lib/utils';
-
+import { codestring } from 'detritus-client/lib/utils/markup';
 import { writeFile, readFile } from 'node:fs/promises';
 @SubCommand.applyOptions({
     name: 'add',
@@ -37,6 +39,7 @@ export class SheetAddCommand extends SubCommand {
         }>,
     ) {
         const filename = `${ctx.args.sheet.filename}.${Date.now()}.por`;
+
         const dir = `./data/por_files/${filename}`;
         ctx.client.logger.debug(
             `creating new sheet in ${dir}. fetching data..`,
@@ -58,13 +61,40 @@ export class SheetAddCommand extends SubCommand {
         const filecontent = Buffer.from(await data.arrayBuffer());
         const player = ctx.args.user?.id ?? ctx.user.id;
         await writeFile(dir, filecontent, { flag: 'w' });
-        const char = await ctx.client.games.pathfinder.sheets.create(
-            dir,
-            player,
-        );
-        if (char === null) {
-            return ctx.error('too many people to think about...!');
+        let char: SheetData | undefined | null = null;
+        try {
+            char = await ctx.client.games.pathfinder.sheets
+                .create(dir, player)
+                .catch(async (e) => {
+                    if (e) {
+                        switch (e.message) {
+                            case 'NO_CLASSES':
+                                await ctx.error(
+                                    `it appears that the sheet you send is not Valid.`,
+                                );
+                                return null;
+
+                            default:
+                                return null;
+                        }
+                        return null;
+                    }
+                });
+        } catch (error) {
+            if (!(error instanceof Error)) {
+                return ctx.error(
+                    'I do not know what happened. Please try again later.',
+                );
+            }
+            return ctx.error(
+                `Eror creating sheet ${codestring(error.message)}`,
+            );
         }
+
+        if (!char) {
+            throw new CustomError('INVALID_CHARACTER_DATA');
+        }
+
         let p: User | null = null;
         if (/\d+/.test(char.player)) {
             p = await ctx.rest.fetchUser(char.player);
@@ -95,21 +125,23 @@ export class SheetAddCommand extends SubCommand {
                 ].join('\n'),
             );
 
-        return ctx.say(
-            `✅ successfully created the ${char?.name} character sheet for ${!p ? 'the Dm' : p?.mention}.\nHere some basic info:`,
-            {
-                flags: MessageFlags.SUPPRESS_NOTIFICATIONS,
-                embeds: [embed],
-                files: img
-                    ? [
-                          {
-                              filename: 'image.png',
-                              value: img,
-                          },
-                      ]
-                    : undefined,
-            },
-        );
+        return ctx
+            .say(
+                `✅ successfully created the ${char?.name} character sheet for ${!p ? 'the Dm' : p?.mention}.\nHere some basic info:`,
+                {
+                    flags: MessageFlags.EPHEMERAL,
+                    embeds: [embed],
+                    files: img
+                        ? [
+                              {
+                                  filename: 'image.png',
+                                  value: img,
+                              },
+                          ]
+                        : undefined,
+                },
+            )
+            .catch(console.error);
     }
 
     /*async mkfile(filename: string) {

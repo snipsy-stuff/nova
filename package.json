@@ -3,7 +3,7 @@
   "description": "nova a ''easy-to-use'' Discord bot.",
   "packageManager": "yarn@4.9.2",
   "dependencies": {
-    "detritus-client": "0.17.0-beta.85",
+    "detritus-client": "0.17.0-beta.89",
     "tsconfig-paths": "^4.2.0",
     "xml2js": "^0.6.2"
   },
@@ -19,13 +19,13 @@
     "start:upload": "yarn build && yarn upload "
   },
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@types/node": "^24.3.0",
+    "@eslint/js": "^9.36.0",
+    "@types/node": "24.5.2",
     "@types/xml2js": "^0",
-    "eslint": "^9.34.0",
+    "eslint": "^9.36.0",
     "prettier": "3.6.2",
     "prisma": "^6.14.0",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.44.0"
   }
 }

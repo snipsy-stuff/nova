@@ -14,6 +14,10 @@ const models = {
     description: 'chat with an ai.',
     options: [
         new StringOption()
+            .setName('text')
+            .setRequired(true)
+            .setDescription('the text to ask'),
+        new StringOption()
             .setName('model')
             .setChoices(
                 Object.entries(models).map((model) => ({
@@ -22,9 +26,6 @@ const models = {
                 })),
             )
             .setDescription('model to choose.'),
-        new StringOption()
-            .setName('text')
-            .setDescription('the text to ask'),
     ],
 })
 export default class AIChatCommand extends CustomCommand {
@@ -34,18 +35,16 @@ export default class AIChatCommand extends CustomCommand {
             text: string;
         }>,
     ) {
-        const dice = ctx.args.model;
+        const model = ctx.args.model;
 
         const ai = new LmStudio();
-        await ctx.say('thinking...', { flags: 64 });
-        const data = await ai.chat(dice, ctx.args.text, ctx.user);
+        await ctx.say('thinking...');
+        const data = await ai.chat(model, ctx.args.text, ctx.user);
         console.log(
             `${ctx.user.username} requested to know: ${ctx.args.text}`,
         );
-        console.log(`resukt; ${data}`);
-        console.log(typeof data, data.length);
         const response = data[data.length - 1] || data[0];
-        return ctx.say(response.replaceAll('%', ''), { flags: 64 });
+        return ctx.send({ content: response });
     }
 }
 type ValueOf<T> = T[keyof T];

@@ -16,6 +16,9 @@ export class LmStudio {
         const body = {
             model: model,
             stream: false,
+            response_format: {
+                type: 'text',
+            },
             messages: [
                 {
                     role: 'system',
@@ -23,18 +26,10 @@ export class LmStudio {
 Your name is Nova, and the requesting user's name is ${user.name}.
 Speak with a natural, human-like tone.
 Avoid robotic phrasing.
-Rules you MUST obey:
-- Do not explain intentions, actions, or the prompt itself.
-- Do not reference that you are an AI model.
-- Do not say "Need to comply" or similar phrases.
-- Do not say "User asked for..." or "Here’s the info…"
-- Respond with the answer only, in a natural conversational way.
-- Do not include filler or commentary unless requested.
-- Treat each input as if speaking directly with the user in a fluid, human tone.
-- Do not say something like "Need to give info about Pathfinder 1E normal standard sword. Provide stats." or similar things at the beginning.
-- conclude your own prompt in the beginning and divide it with the response using %%%%%. 
-Response to the user's request MUST begin with %%%% 
-Total response should stay below 2000 Characters, cut appropriately before.
+Your main task will be to answer questions related to Pathfinder 1E and realted 3rd party content.
+Please format the response so it is only using Discord's markdown as formatting.
+if the response you create is over 2000 characters long, please add 5 "%" after the last sentence.
+
 `,
                 },
                 {
@@ -43,8 +38,9 @@ Total response should stay below 2000 Characters, cut appropriately before.
                 },
             ],
         };
+
         const data = await fetch(
-            'http://192.168.56.1:1234/v1/chat/completions',
+            'http://lmstudio.local:1234/v1/chat/completions',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -53,7 +49,6 @@ Total response should stay below 2000 Characters, cut appropriately before.
         );
         if (data.ok) {
             const data2 = await data.json();
-            console.log(data2);
             return data2.choices[0].message.content.split('%%%%');
         } else {
             const res = await data.json();

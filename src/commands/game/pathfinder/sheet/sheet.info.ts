@@ -1,15 +1,18 @@
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { AutoComplete } from '@nova/commands/options/AutoComplete';
 import { SubCommand } from '@nova/commands/options/SubCommand';
+import { NovaShardClient } from '@nova/core/client/ShardClient';
 import { SheetData } from '@nova/typings/pathfinder/sheetdata';
 import { MessageComponentButtonStyles } from 'detritus-client/lib/constants';
+
 import {
     ComponentActionRow,
     ComponentButton,
+    ComponentSelectMenu,
+    ComponentSelectMenuOption,
     Embed,
 } from 'detritus-client/lib/utils';
 import { readFile } from 'node:fs/promises';
-const file = './data/sheets/index.json';
 @SubCommand.applyOptions({
     name: 'info',
     description: 'information about a character sheet.',
@@ -18,26 +21,37 @@ const file = './data/sheets/index.json';
             .setName('character')
             .setDescription('the name of the character')
             .addAutoComplete(async (ctx) => {
-                const data = JSON.parse(
-                    await readFile(file, 'utf-8'),
-                );
+                const pf = (ctx.client as NovaShardClient).games
+                    .pathfinder;
 
-                const keys = Object.keys(data);
+                const names = await pf.sheets
+                    .list()
+                    .then((data) =>
+                        data.map((d1) => ({ name: d1.name })),
+                    );
+
                 if (!ctx.value) {
                     return ctx.respond({
-                        choices: keys.map((k) => ({
-                            name: k,
-                            value: data[k],
-                        })),
+                        choices: names
+                            .map((k) => ({
+                                name: k.name,
+                                value: k.name,
+                            }))
+                            .slice(0, 15),
                     });
                 }
                 return ctx.respond({
-                    choices: keys
-                        .filter((key) => key.includes(ctx.value))
+                    choices: names
+                        .filter((key) =>
+                            key.name
+                                .toLowerCase()
+                                .includes(ctx.value.toLowerCase()),
+                        )
                         .map((value) => ({
-                            name: value,
-                            value: data[value],
-                        })),
+                            name: value.name,
+                            value: value.name,
+                        }))
+                        .slice(0, 15),
                 });
             }),
     ],
@@ -53,12 +67,11 @@ export class SheetInfoCommand extends SubCommand {
                 'could not parse character from sheet. does it even exist?!',
             );
         }
-        const character = JSON.parse(
-            await readFile(ctx.args.character, 'utf-8').catch(
-                () => 'null',
-            ),
-        ) as SheetData | 'null';
-        if (character === 'null') {
+        const character =
+            await ctx.client.games.pathfinder.sheets.get(
+                ctx.args.character,
+            );
+        if (!character) {
             return ctx.error(
                 'could not parse character from sheet. does it even exist?!',
             );
@@ -88,13 +101,15 @@ export class SheetInfoCommand extends SubCommand {
                 const { components, embeds, img } =
                     await this.createMainResponse(ctx, character);
 
-                return ctx2.editOrRespond({
-                    embeds: embeds,
-                    components: components,
-                    files: img
-                        ? [{ value: img, filename: 'image.jpg' }]
-                        : undefined,
-                });
+                return ctx2
+                    .editOrRespond({
+                        embeds: embeds,
+                        components: components,
+                        files: img
+                            ? [{ value: img, filename: 'image.jpg' }]
+                            : undefined,
+                    })
+                    .catch(console.error);
             },
         });
     }
@@ -120,10 +135,6 @@ export class SheetInfoCommand extends SubCommand {
         if (character.image) {
             img = await readFile(character.image);
         }
-        ctx.client.logger.debug(
-            character.personal.charheight.toString(),
-            'CHAR_HEIGHT',
-        );
 
         const mainEmbed = new Embed()
             .setColor(0xcdccff)
@@ -143,6 +154,7 @@ export class SheetInfoCommand extends SubCommand {
             new ComponentActionRow(),
             new ComponentActionRow(),
             new ComponentActionRow(),
+            new ComponentActionRow(),
         ];
         utilityRow[0]
             .addButton(this.createAttributesButton(ctx, character))
@@ -158,6 +170,9 @@ export class SheetInfoCommand extends SubCommand {
             .addButton(this.createWeaponsButton(ctx, character))
             .addButton(this.createSavesButton(ctx, character))
             .addButton(this.createSpellButton(ctx, character));
+        utilityRow[3].addButton(
+            this.createSpellsKnownButton(ctx, character),
+        );
 
         const mainComponents = utilityRow;
 
@@ -166,6 +181,158 @@ export class SheetInfoCommand extends SubCommand {
             img,
             components: mainComponents,
         };
+    }
+
+    createSpellsKnownButton(
+        context: CustomContext<{ character: string }>,
+        character: SheetData,
+    ) {
+        return new ComponentButton({
+            label: 'spells',
+            customId: `skill.info:${context.userId}:${character.name}:spellsknown`,
+            run: (ctx) => {
+                const skills =
+                    character.spellsknown?.[0]?.spell ?? [];
+                const embeds: Embed[] = [];
+                let i = 0;
+
+                if (!skills.length) {
+                    return ctx.editOrRespond({
+                        embeds: [
+                            {
+                                description: 'no skills.',
+                            },
+                        ],
+                        components: [
+                            new ComponentActionRow().addButton(
+                                this.createBackButton(
+                                    context,
+                                    character,
+                                ),
+                            ),
+                        ],
+                    });
+                }
+                for (const skill of skills) {
+                    embeds.push(
+                        new Embed()
+                            .setColor(0xcdccff)
+                            .setAuthor(
+                                `${skill.name} [${skill.spellschool}]`,
+                            )
+                            .setColor(0xccdccf)
+                            .setFooter(
+                                `requested by ${ctx.user.name}`,
+                            )
+                            .setDescription(
+                                skill.description
+                                    .replace(/\n\n/, '\n')
+                                    .slice(0, 2000),
+                            ),
+                    );
+                }
+
+                const spells =
+                    skills.length >= 20
+                        ? skills.slice(0, 20)
+                        : skills;
+                const movebuttons = new ComponentActionRow()
+                    .addButton(
+                        new ComponentButton({
+                            label: 'previous',
+                            customId: `skill.info:${context.userId}:${character.name}:spellsknown:previous`,
+                            run: (ctx) => {
+                                if (i === 0) {
+                                    i = embeds.length - 1;
+                                } else {
+                                    i--;
+                                }
+                                return ctx.editOrRespond({
+                                    components: [movebuttons],
+                                    embeds: [embeds[i]],
+                                    flags: 64,
+                                });
+                            },
+                        }),
+                    )
+                    .addButton(
+                        new ComponentButton({
+                            label: 'next',
+                            customId: `skill.info:${context.userId}:${character.name}:spellsknown:next`,
+                            run: (ctx) => {
+                                if (i === embeds.length - 1) {
+                                    i = 0;
+                                } else {
+                                    i++;
+                                }
+                                return ctx.editOrRespond({
+                                    components: [movebuttons],
+                                    flags: 64,
+                                    embeds: [embeds[i]],
+                                });
+                            },
+                        }),
+                    )
+                    .addButton(
+                        this.createBackButton(context, character),
+                    );
+
+                const selectMenu = new ComponentSelectMenu({
+                    // defaultValues: [],
+                    run: (ctx) => {
+                        const data = ctx.data.values?.[0] ?? '';
+                        const spell = spells.find(
+                            (spell) => spell.name === data,
+                        );
+                        if (!spell) throw null;
+                        return ctx.editOrRespond({
+                            embeds: [
+                                embeds.find(
+                                    (e) =>
+                                        e.author?.name ===
+                                        `${spell.name} [${spell.spellschool}]`,
+                                ) as Embed,
+                            ],
+                            components: [
+                                new ComponentActionRow().addButton(
+                                    this.createBackButton(
+                                        context,
+                                        character,
+                                    ),
+                                ),
+                            ],
+                        });
+                    },
+                });
+
+                for (const spell of spells) {
+                    selectMenu.addOption(
+                        new ComponentSelectMenuOption()
+                            .setLabel(
+                                `${spell.name} [${spell.subschooltext}]`,
+                            )
+                            .setValue(spell.name),
+                    );
+                }
+
+                return ctx
+                    .editOrRespond({
+                        embeds: [embeds[0]],
+                        flags: 64,
+                        components: [
+                            movebuttons,
+                            new ComponentActionRow().addSelectMenu(
+                                selectMenu,
+                            ),
+                        ],
+                    })
+                    .catch((e) =>
+                        console.log(
+                            JSON.stringify(e['errors'], null, 2),
+                        ),
+                    );
+            },
+        });
     }
 
     createAttributesButton(
@@ -543,7 +710,6 @@ export class SheetInfoCommand extends SubCommand {
                                         ),
                                     );
 
-                                console.log('running');
                                 return ctx2.editOrRespond({
                                     embeds: [em],
                                     flags: 64,
@@ -614,7 +780,6 @@ export class SheetInfoCommand extends SubCommand {
                             label: 'previous',
                             customId: `skill.info:${context.userId}:${character.name}:weapons:previous`,
                             run: (ctx) => {
-                                console.log('run2');
                                 if (i === 0) {
                                     i = embeds.length - 1;
                                 } else {
@@ -639,7 +804,6 @@ export class SheetInfoCommand extends SubCommand {
                             label: 'next',
                             customId: `skill.info:${context.userId}:${character.name}:weapons:next`,
                             run: (ctx) => {
-                                console.log('run');
                                 if (i === embeds.length - 1) {
                                     i = 0;
                                 } else {

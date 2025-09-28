@@ -28,7 +28,13 @@ async function start() {
     await listeners.loadAll();
     await commands.addMultipleIn('./commands/');
     await client.run({ wait: true });
-    await commands.checkAndUploadCommands();
+    await commands.checkAndUploadCommands().catch((err) => {
+        console.error(JSON.stringify(err, null, 1));
+        if (err.response.fetchResponse.status === 429) {
+            return;
+        }
+        throw err;
+    });
     await commands.run({ wait: true });
 }
 

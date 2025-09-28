@@ -19,6 +19,7 @@ dist/
 data/extracted
 data/por_files
 data/sheets
+data/skills
 !data/pathfinder/*
 src/packages/prisma
 .env.local
