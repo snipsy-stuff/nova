@@ -74,7 +74,7 @@ export class SpellInfoCommand extends SubCommand {
             ` **Resist**: ${spell.resist}`,
             Array.isArray(spell.spellcomp)
                 ? `**Components**: ${spell.spellcomp.map((sp) => sp).join(', ')}`
-                : spell.spellcomp || '',
+                : `**Component**:${spell.spellcomp}` || '',
             spell.description.slice(0, 1900),
         ].filter((v) => !!v);
 
