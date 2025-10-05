@@ -3,9 +3,9 @@ import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { StringOption } from '@nova/commands/options/StringOption';
 import { LmStudio } from 'packages/ai/LMStudio';
 const models = {
-    gpt4: 'openai/gpt-oss-20b',
+    gpt4: 'gpt-oss-20b',
     mistral: 'mistral@7b',
-    qwen2: 'deep-seek-r1@1.5B',
+    qwen2: 'deep-seek-r1@1.5b',
     lama: 'lama@1b',
     gemma3: 'gemma3@4b',
 } as const;
@@ -44,7 +44,19 @@ export default class AIChatCommand extends CustomCommand {
             `${ctx.user.username} requested to know: ${ctx.args.text}`,
         );
         const response = data[data.length - 1] || data[0];
-        return ctx.send({ content: response });
+        return ctx.send({
+            content: response.slice(0, 2000),
+            ...(response.length >= 2000
+                ? {
+                      files: [
+                          {
+                              filename: 'output.txt',
+                              value: Buffer.from(response),
+                          },
+                      ],
+                  }
+                : undefined),
+        });
     }
 }
 type ValueOf<T> = T[keyof T];

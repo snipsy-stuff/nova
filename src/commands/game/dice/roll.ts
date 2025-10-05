@@ -20,8 +20,16 @@ import { codestring } from 'detritus-client/lib/utils/markup';
 })
 export default class RollCommand extends CustomCommand {
     async exec(ctx: CustomContext<{ dice: string; label?: string }>) {
-        const dice = ctx.args.dice;
+        let dice = ctx.args.dice;
         const label = ctx.args.label || '';
+
+        if (!dice.includes('d')) {
+            if (isNaN(+dice)) {
+                return ctx.error('invalid dice. example: d20');
+            } else {
+                dice = 'd' + dice;
+            }
+        }
 
         const { total, details } = this.roll(dice);
 
@@ -48,6 +56,18 @@ export default class RollCommand extends CustomCommand {
         total: number;
         details: DiceResult[];
     } {
+        const blessed = 69;
+        const cursed = 66;
+
+        const change = Math.floor(Math.random() * 10000);
+        //TODO: make it
+        const blessedOrCursed: 'blessed' | 'cursed' | undefined =
+            change === blessed
+                ? 'blessed'
+                : change === cursed
+                  ? 'cursed'
+                  : undefined;
+
         const diceRegex = /(\d*)d(\d+)([+-]\d+)?/g;
         const results: DiceResult[] = [];
         let match: RegExpExecArray | null;
@@ -59,6 +79,14 @@ export default class RollCommand extends CustomCommand {
 
             const rolls: number[] = [];
             for (let i = 0; i < Math.min(numDice, 200); i++) {
+                if (blessedOrCursed === 'blessed') {
+                    rolls.push(Math.min(diceSides, 100));
+                }
+
+                if (blessedOrCursed === 'cursed') {
+                    rolls.push(1);
+                }
+
                 rolls.push(
                     Math.floor(
                         Math.random() * Math.min(diceSides, 100),

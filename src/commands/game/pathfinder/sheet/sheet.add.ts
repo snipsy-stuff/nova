@@ -66,6 +66,7 @@ export class SheetAddCommand extends SubCommand {
             char = await ctx.client.games.pathfinder.sheets
                 .create(dir, player)
                 .catch(async (e) => {
+                    console.error(e);
                     if (e) {
                         switch (e.message) {
                             case 'NO_CLASSES':

@@ -170,9 +170,10 @@ export class SheetInfoCommand extends SubCommand {
             .addButton(this.createWeaponsButton(ctx, character))
             .addButton(this.createSavesButton(ctx, character))
             .addButton(this.createSpellButton(ctx, character));
-        utilityRow[3].addButton(
-            this.createSpellsKnownButton(ctx, character),
-        );
+        utilityRow[3]
+            .addButton(this.createSpellsKnownButton(ctx, character))
+            .addButton(this.createSheetExportButton(ctx, character))
+            .addButton(this.createDeleteButton(ctx, character));
 
         const mainComponents = utilityRow;
 
@@ -181,6 +182,65 @@ export class SheetInfoCommand extends SubCommand {
             img,
             components: mainComponents,
         };
+    }
+
+    createDeleteButton(
+        context: CustomContext<{ character: string }>,
+        character: SheetData,
+    ) {
+        return new ComponentButton({
+            style: MessageComponentButtonStyles.DANGER,
+            label: 'delete',
+            customId: `sheet.${context.user.id}.${character.name}.delete`,
+            run: (ctx) => ctx.message.delete(),
+        });
+    }
+    createSheetExportButton(
+        context: CustomContext<{ character: string }>,
+        character: SheetData,
+    ) {
+        return new ComponentButton({
+            label: 'export',
+            customId: `sheet.export.${context.user.id}:${character.name}:export`,
+            run: async (ctx) => {
+                const info =
+                    await context.client.games.pathfinder.sheets
+                        .list()
+                        .then((chars) =>
+                            chars.find(
+                                (char) =>
+                                    char.name === character.name,
+                            ),
+                        );
+                if (info) {
+                    const path = await readFile(info.por);
+                    return ctx.editOrRespond({
+                        content: `${character.name}'s sheet:`,
+                        files: [
+                            {
+                                filename: `${character.name}.por`,
+                                value: path,
+                            },
+                        ],
+                        components: [
+                            new ComponentActionRow()
+                                .addButton(
+                                    this.createBackButton(
+                                        context,
+                                        character,
+                                    ),
+                                )
+                                .addButton(
+                                    this.createDeleteButton(
+                                        context,
+                                        character,
+                                    ),
+                                ),
+                        ],
+                    });
+                }
+            },
+        });
     }
 
     createSpellsKnownButton(
