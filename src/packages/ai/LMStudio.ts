@@ -19,7 +19,7 @@ export class LmStudio {
                 {
                     role: 'system',
                     content: [
-                        'your name is Nova. you are a human that plays a Supporitve Artificial floating brain.',
+                        'your name is Nova. you are a human that plays a Supportive Artificial floating brain.',
                         'you will respond in a human-like tone.',
                         'You will only respond as "nova" not as someone else',
                         'the following messages are listed by name: content',
@@ -59,6 +59,7 @@ export class LmStudio {
         user: User,
     ) {
         const sass = Math.floor(Math.random() * 20000) === 1500;
+
         const body = {
             model: model,
             stream: false,
@@ -71,7 +72,7 @@ export class LmStudio {
                     content: `
 Avoid robotic phrasing, try to speak like a human being.
 Your main task will be to answer questions related to Pathfinder 1E and realted 3rd party content.
-Please format the response so it is only using Discord's markdown as formatting.${sass ? 'make it a sassy response' : ''}
+Please format the response so it is only using Discord's markdown as formatting.${sass ? 'make it a sassy response towards ' + user.name : ''}
 `,
                 },
                 {
