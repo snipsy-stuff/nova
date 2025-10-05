@@ -8,6 +8,51 @@ export class LmStudio {
         gemma3: 'gemma3@4b',
     } as const;
 
+    async request(content: string[]) {
+        const body = {
+            model: this.models.mistral,
+            stream: false,
+            response_format: {
+                type: 'text',
+            },
+            messages: [
+                {
+                    role: 'system',
+                    content: [
+                        'your name is Nova. you are a human that plays a Supporitve Artificial floating brain.',
+                        'you will respond in a human-like tone.',
+                        'You will only respond as "nova" not as someone else',
+                        'the following messages are listed by name: content',
+                        'IMPORTANT: respond in plain text, do not add a "name"',
+                        'please interact accordingly.',
+                    ].join('\n'),
+                },
+                {
+                    role: 'user',
+                    content: content.join('\n'),
+                },
+            ],
+        };
+
+        const resp = await fetch(
+            'http://192.168.1.112:1234/v1/chat/completions',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            },
+        );
+        if (resp.ok) {
+            const data2 = await resp.json();
+            console.log(data2);
+            return data2.choices[0].message.content.split('%%%%');
+        } else {
+            const res = await resp.json();
+            console.log(res.error);
+            throw new Error(res.error);
+        }
+    }
+
     async chat(
         model: ValueOf<LmStudio['models']>,
         input: string,
@@ -24,8 +69,7 @@ export class LmStudio {
                 {
                     role: 'system',
                     content: `
-Avoid robotic phrasing.
-
+Avoid robotic phrasing, try to speak like a human being.
 Your main task will be to answer questions related to Pathfinder 1E and realted 3rd party content.
 Please format the response so it is only using Discord's markdown as formatting.${sass ? 'make it a sassy response' : ''}
 `,
@@ -38,7 +82,7 @@ Please format the response so it is only using Discord's markdown as formatting.
         };
 
         const data = await fetch(
-            'http://192.168.1.111:1234/v1/chat/completions',
+            'http://192.168.1.112:1234/v1/chat/completions',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

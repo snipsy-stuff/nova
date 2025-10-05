@@ -21,6 +21,7 @@ const client = new NovaShardClient(token, {
         intents: [
             GatewayIntents.MESSAGE_CONTENT,
             GatewayIntents.GUILDS,
+            GatewayIntents.GUILD_MESSAGE_REACTIONS,
         ],
     },
 });
