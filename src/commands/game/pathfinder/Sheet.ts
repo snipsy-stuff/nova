@@ -1,7 +1,7 @@
 // import { SheetInfoCommand } from './sheet/sheet.info';
 
 import { RootCommand } from 'packages/commands/RootCommand';
-import { SheetAddCommand } from './sheet/sheet.add';
+import { SheetAddCommand } from './sheet/sheet.import';
 import { SheetInfoCommand } from './sheet/sheet.info';
 @RootCommand.applyOptions({
     name: 'sheet',

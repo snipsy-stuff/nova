@@ -11,8 +11,8 @@ import { Embed } from 'detritus-client/lib/utils';
 import { codestring } from 'detritus-client/lib/utils/markup';
 import { writeFile, readFile } from 'node:fs/promises';
 @SubCommand.applyOptions({
-    name: 'add',
-    description: 'add a sheet to the bot.',
+    name: 'import',
+    description: 'import a sheet to the bot.',
     options: [
         new FileOption()
             .setName('sheet')
@@ -22,7 +22,7 @@ import { writeFile, readFile } from 'node:fs/promises';
             .setName('self')
             .setRequired(false)
             .setDescription(
-                'whenever you upload it for a different player. [Server Owner Only]',
+                'whenever you upload it for a different player',
             ),
         new UserOption()
             .setName('user')

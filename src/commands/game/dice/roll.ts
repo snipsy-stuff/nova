@@ -31,6 +31,7 @@ export default class RollCommand extends CustomCommand {
             }
         }
 
+        await ctx.say('rolling...');
         const { total, details } = this.roll(dice);
 
         const rolls: number[] = [];

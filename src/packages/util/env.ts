@@ -4,7 +4,8 @@ import util from 'node:util';
  * typing information of the .env file.
  */
 interface Env {
-    DISCORD_TOKEN: string;
+    PRIMARY_TOKEN?: string;
+    BETA_TOKEN?: string;
     BOOT_LOG_CHANNEL: string;
     COMMAND_LOG_CHANNEL: string;
     ERROR_LOG_CHANNEL: string;
@@ -27,7 +28,6 @@ export function parseEnv(filePath = './.env.local'): Env {
             if (errnoError.code === 'ENOENT') {
                 console.error(`File not found: ${filePath}`);
                 return {
-                    DISCORD_TOKEN: '',
                     BOOT_LOG_CHANNEL: '',
                     COMMAND_LOG_CHANNEL: '',
                     ERROR_LOG_CHANNEL: '',

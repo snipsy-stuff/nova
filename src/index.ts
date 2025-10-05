@@ -6,13 +6,17 @@ import { parseEnv } from 'packages/util/env';
 
 const env = parseEnv('./.env.local');
 
-if (!env.DISCORD_TOKEN) {
+let token = '';
+
+if (env.PRIMARY_TOKEN) token = env.PRIMARY_TOKEN;
+if (env.BETA_TOKEN) token = env.BETA_TOKEN;
+if (!token) {
     throw new Error(
         'no token provided or found in .env.local file. please add it.',
     );
 }
 
-const client = new NovaShardClient(env.DISCORD_TOKEN, {
+const client = new NovaShardClient(token, {
     gateway: {
         intents: [
             GatewayIntents.MESSAGE_CONTENT,
