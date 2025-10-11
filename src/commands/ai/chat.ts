@@ -2,6 +2,7 @@ import { CustomCommand } from '@nova/commands/CustomCommand';
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { StringOption } from '@nova/commands/options/StringOption';
 import { LmStudio } from 'packages/ai/LMStudio';
+
 const models = {
     gpt4: 'gpt-oss-20b',
     mistral: 'mistral@7b',
@@ -39,7 +40,9 @@ export default class AIChatCommand extends CustomCommand {
 
         const ai = new LmStudio();
         await ctx.say('thinking...');
-        const data = await ai.chat(model, ctx.args.text, ctx.user);
+        const data = await ai
+            .chat(model, ctx.args.text, ctx.user)
+            .catch(() => ['UNREACHABLE']);
         console.log(
             `${ctx.user.username} requested to know: ${ctx.args.text}`,
         );

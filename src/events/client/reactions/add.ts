@@ -10,27 +10,25 @@ import { GatewayClientEvents } from 'detritus-client';
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.MessageReactionAdd) {
-        const emoji = '🏁';
-        console.log(data.reaction.emoji.name === emoji);
-
-        if (data.reaction.emoji.name === emoji) {
-            const channel = await this.client.rest.fetchChannel(
-                data.channelId,
-            );
-            if (!channel) return;
-            const lastMessages = await channel
-                ?.fetchMessages({
-                    limit: 5,
-                })
-                .then((msgs) =>
-                    msgs.map((m) => `${m.author.name}:${m.content}`),
-                );
-            if (!lastMessages) return;
-            const content =
-                await this.client.lmstudio.request(lastMessages);
-            await channel.createMessage({
-                content: content,
-            });
-        }
+        // const emoji = {};
+        // if (data.reaction.emoji === emoji) {
+        //     const channel = await this.client.rest.fetchChannel(
+        //         data.channelId,
+        //     );
+        //     if (!channel) return;
+        //     const lastMessages = await channel
+        //         ?.fetchMessages({
+        //             limit: 5,
+        //         })
+        //         .then((msgs) =>
+        //             msgs.map((m) => `${m.author.name}:${m.content}`),
+        //         );
+        //     if (!lastMessages) return;
+        //     const content =
+        //         await this.client.lmstudio.request(lastMessages);
+        //     await channel.createMessage({
+        //         content: content,
+        //     });
+        // }
     }
 }

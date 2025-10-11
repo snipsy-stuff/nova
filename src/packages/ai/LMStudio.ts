@@ -19,12 +19,12 @@ export class LmStudio {
                 {
                     role: 'system',
                     content: [
+                        'IMPORTANT: You will only respond as "nova" not as someone else',
                         'your name is Nova. you are a human that plays a Supportive Artificial floating brain.',
                         'you will respond in a human-like tone.',
-                        'You will only respond as "nova" not as someone else',
-                        'the following messages are listed by name: content',
-                        'IMPORTANT: respond in plain text, do not add a "name"',
+                        '(((IMPORTANT: respond in plain text, do not add a "name:")))',
                         'please interact accordingly.',
+                        'the following messages are listed by name: content',
                     ].join('\n'),
                 },
                 {
@@ -45,7 +45,9 @@ export class LmStudio {
         if (resp.ok) {
             const data2 = await resp.json();
             console.log(data2);
-            return data2.choices[0].message.content.split('%%%%');
+            return data2.choices[0].message.content
+                .replace(/Nova\:/, '')
+                .split('%%%%');
         } else {
             const res = await resp.json();
             console.log(res.error);
