@@ -13,6 +13,7 @@ import { setTimeout as asyncTimeout } from 'timers/promises';
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.GatewayReady) {
+        const enbaled = false;
         await this.client.setPresence({
             activities: [
                 {
@@ -41,10 +42,12 @@ export default class ClientGatewayReadyEvent extends CustomListener {
         );
         const existing = parseEnv();
         const channelId = '';
-        await this.getPrinterStats();
-        setInterval(async () => {
+        if (enbaled) {
             await this.getPrinterStats();
-        }, 60_000);
+            setInterval(async () => {
+                await this.getPrinterStats();
+            }, 60_000);
+        }
     }
 
     async getPrinterStats() {
@@ -55,7 +58,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
             complete: 'complete',
             error: 'error',
             cancelled: 'cancelled',
-        };
+        } as const;
         const printers = {
             andromeda: {
                 host: 'andromeda.printer',
@@ -66,8 +69,9 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                 host: 'centaurus.printer',
                 color: '#dead15',
             },
-        };
-        for (const pr of Object.keys(printers)) {
+        } as const;
+        for (const prr of Object.keys(printers)) {
+            const pr = prr as keyof typeof printers;
             const printer = `http://${printers[pr].host}/printer/objects/query?print_stats`;
 
             const fetched = await fetch(printer);
