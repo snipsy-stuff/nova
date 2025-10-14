@@ -44,7 +44,7 @@ export default class RollCommand extends CustomCommand {
         const str = ['```js', rolls.join(', '), '```'].join('\n');
         const container = [
             new ComponentTextDisplay({
-                content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(rolles.join(', '))}: \`${total}\` `,
+                content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(dice)}: \`${total}\` `,
             }),
             new ComponentTextDisplay({
                 content: str,
