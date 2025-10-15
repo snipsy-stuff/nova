@@ -440,7 +440,9 @@ export class SheetInfoCommand extends SubCommand {
                     embeds.push(
                         new Embed()
                             .setColor(0xcdccff)
-                            .setAuthor(`${skill.name}`)
+                            .setAuthor(
+                                `${skill.name} ${skill.attrbonus !== '0' ? `${skill.attrbonus} on ${skill.attrname}` : ''}`,
+                            )
                             .setColor(0xccdccf)
                             .setFooter(
                                 `requested by ${ctx.user.name}`,

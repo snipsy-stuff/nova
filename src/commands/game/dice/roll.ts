@@ -1,20 +1,43 @@
 import { CustomCommand } from '@nova/commands/CustomCommand';
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { StringOption } from '@nova/commands/options/StringOption';
-import { ComponentTextDisplay } from 'detritus-client/lib/utils';
+import {
+    ComponentButton,
+    ComponentTextDisplay,
+} from 'detritus-client/lib/utils';
 import { codestring } from 'detritus-client/lib/utils/markup';
-
+import { readFile } from 'fs/promises';
 @CustomCommand.applyOptions({
     name: 'roll',
     description: 'roll a dice.',
     options: [
         new StringOption()
             .setName('dice')
-            .setRequired(true)
-            .setDescription('the die to roll'),
+            .setRequired(false)
+            .setDescription(
+                'the die to roll, ignored if `label` is registered.',
+            ),
 
         new StringOption()
             .setName('label')
+            .setChoices([
+                {
+                    name: 'Fortitude Save',
+                    value: 'fort',
+                },
+                {
+                    name: 'Reflex Save',
+                    value: 'ref',
+                },
+                {
+                    name: 'Will save',
+                    value: 'will',
+                },
+                {
+                    name: 'Initiative',
+                    value: 'init',
+                },
+            ])
             .setDescription('the "roll". eg: wisdom check'),
     ],
 })
@@ -23,6 +46,78 @@ export default class RollCommand extends CustomCommand {
         let dice = ctx.args.dice;
         const label = ctx.args.label || '';
 
+        if (label) {
+            const player = ctx.user.id;
+
+            const existing = (
+                await ctx.client.games.pathfinder.sheets.list()
+            ).find((c) => c.player === player);
+            if (existing) {
+                const character =
+                    await ctx.client.games.pathfinder.sheets.get(
+                        existing.name,
+                    );
+                if (character) {
+                    switch (label) {
+                        case 'will':
+                            const d = `1d20+${character.saves.find((save) => save.abbr === 'Will')?.save || '0'}`;
+                            const { total, details } = this.roll(d);
+
+                            const rolls: number[] = [];
+                            const rolles: string[] = [];
+                            for (const det of details) {
+                                rolls.push(...det.rolls);
+                                rolles.push(det.dice);
+                            }
+
+                            const str = [
+                                '```js',
+                                rolls.join(', '),
+                                '```',
+                            ].join('\n');
+                            const container = [
+                                new ComponentTextDisplay({
+                                    content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(d)}: \`${total}\` `,
+                                }),
+                                new ComponentTextDisplay({
+                                    content: str,
+                                }),
+                            ];
+                            return ctx.display(container);
+                        case 'init':
+                            const d2 = `1d20${character.initiative.total || ''}`;
+
+                            const {
+                                total: total2,
+                                details: details2,
+                            } = this.roll(d2);
+
+                            const rolls2: number[] = [];
+                            const rolles2: string[] = [];
+                            for (const det of details2) {
+                                rolls2.push(...det.rolls);
+                                rolles2.push(det.dice);
+                            }
+
+                            const str2 = [
+                                '```js',
+                                rolls2.join(', '),
+                                '```',
+                            ].join('\n');
+                            const container2 = [
+                                new ComponentTextDisplay({
+                                    content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(d2)}: \`${total2}\` `,
+                                }),
+                                new ComponentTextDisplay({
+                                    content: str2,
+                                }),
+                            ];
+                            return ctx.display(container2);
+                        default:
+                    }
+                }
+            }
+        }
         if (!dice.includes('d')) {
             if (isNaN(+dice)) {
                 return ctx.error('invalid dice. example: d20');
@@ -30,7 +125,6 @@ export default class RollCommand extends CustomCommand {
                 dice = 'd' + dice;
             }
         }
-
         await ctx.say('rolling...');
         const { total, details } = this.roll(dice);
 

@@ -23,3 +23,4 @@ data/skills
 !data/pathfinder/*
 src/packages/prisma
 .env.local
+/src/generated/prisma

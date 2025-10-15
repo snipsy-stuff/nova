@@ -1,6 +1,5 @@
 import { DiscordHTTPError } from '@nova/core/errors';
 import { Interaction } from 'detritus-client';
-import { Context } from 'vm';
 import { CustomContext } from './CustomInteractionContext';
 import { BaseCommand } from './BaseCommand';
 import { owners } from '@nova/util/Constants';
@@ -36,11 +35,11 @@ export abstract class CustomCommand extends BaseCommand {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (constructor: any) => {
             return class T extends constructor {
-                async exec(ctx: Context) {
-                    if (!owners.includes(ctx.userId)) {
-                        throw new Error('NO_OWNER');
-                    }
-                    return super.exec(ctx);
+                onBeforeRun(
+                    context: Interaction.InteractionContext,
+                    //args: Interaction.ParsedArgs,
+                ) {
+                    return owners.includes(context.userId);
                 }
             };
         };

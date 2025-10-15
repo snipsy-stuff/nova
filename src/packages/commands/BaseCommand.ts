@@ -5,9 +5,11 @@ export class BaseCommand extends Interaction.InteractionCommand {
     onBefore(
         context: Interaction.InteractionContext,
     ): Promise<boolean> | boolean {
-        (context.client as NovaShardClient).logger.log(
+        const client = context.client as NovaShardClient;
+        client.logger.log(
             `[COMMAND_RUN] running command ${this.name}`,
         );
+        client.stats.commands++;
         return true;
     }
 

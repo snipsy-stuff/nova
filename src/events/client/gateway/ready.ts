@@ -1,8 +1,23 @@
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import { CustomListener } from '@nova/listeners/CustomListener';
-import { parseEnv } from '@nova/util/env';
 import { GatewayClientEvents } from 'detritus-client';
 import { ActivityTypes } from 'detritus-client/lib/constants';
 import { setTimeout as asyncTimeout } from 'timers/promises';
+
+const possibleSTatuses = [
+    {
+        type: ActivityTypes.LISTENING,
+        name: 'your Commands.',
+    },
+    {
+        type: ActivityTypes.LISTENING,
+        name: 'daddy',
+    },
+    {
+        type: ActivityTypes.LISTENING,
+        name: '\u200b',
+    },
+];
 
 @CustomListener.applyOptions({
     event: CustomListener.eventNames.GATEWAY_READY,
@@ -16,10 +31,11 @@ export default class ClientGatewayReadyEvent extends CustomListener {
         const enbaled = false;
         await this.client.setPresence({
             activities: [
-                {
-                    type: ActivityTypes.LISTENING,
-                    name: 'your commands.',
-                },
+                possibleSTatuses[
+                    Math.floor(
+                        Math.random() * possibleSTatuses.length,
+                    )
+                ],
             ],
         });
 
@@ -40,8 +56,6 @@ export default class ClientGatewayReadyEvent extends CustomListener {
             `${data.raw.user.username} is now ready.` +
                 `Installed on ${guilds} Server(s) and ${users} user(s) `,
         );
-        const existing = parseEnv();
-        const channelId = '';
         if (enbaled) {
             await this.getPrinterStats();
             setInterval(async () => {
@@ -127,9 +141,4 @@ export default class ClientGatewayReadyEvent extends CustomListener {
             }),
         }).then((data) => data.ok);
     }
-}
-
-function hexToRgb(hex: string) {
-    const bigint = parseInt(hex.replace('#', ''), 16);
-    return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
 }

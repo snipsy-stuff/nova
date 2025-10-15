@@ -8,5 +8,5 @@ export default tseslint.config(
     tseslint.configs.stylistic,
     {
         ignores: ['node_modules/*', 'dist/*'],
-    }
+    },
 );

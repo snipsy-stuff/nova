@@ -8,6 +8,9 @@ export class NovaShardClient extends ShardClient {
     logger = new Logger('nova');
     games: GameManager = new GameManager(this);
     lmstudio = new LmStudio();
+    stats = {
+        commands: 0,
+    };
     setPresence(presence: PresenceOptions) {
         return new Promise((res, rej) => {
             this.gateway.setPresence(

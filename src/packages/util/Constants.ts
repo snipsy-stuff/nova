@@ -7,4 +7,7 @@ export const CHANNELS = {
     JOIN_LOG: '',
 };
 
-export const owners: string[] = ['1395801348490137751'];
+export const owners: string[] = [
+    '1395801348490137751',
+    '735199620803854428',
+];
