@@ -13,6 +13,7 @@ const models = {
 @CustomCommand.applyOptions({
     name: 'chat',
     description: 'chat with an ai.',
+
     options: [
         new StringOption()
             .setName('text')
@@ -30,6 +31,7 @@ const models = {
     ],
 })
 export default class AIChatCommand extends CustomCommand {
+    disabled = true;
     async exec(
         ctx: CustomContext<{
             model: ValueOf<typeof models>;

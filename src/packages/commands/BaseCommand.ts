@@ -1,7 +1,11 @@
 import { NovaShardClient } from '@nova/core/client/ShardClient';
-import { Interaction } from 'detritus-client';
+import { owners } from '@nova/util/Constants';
+import { Constants, Interaction } from 'detritus-client';
+import { CustomCommand } from './CustomCommand';
 
 export class BaseCommand extends Interaction.InteractionCommand {
+    disabled = false;
+    requireSpecialPermission = false;
     onBefore(
         context: Interaction.InteractionContext,
     ): Promise<boolean> | boolean {
@@ -29,6 +33,57 @@ export class BaseCommand extends Interaction.InteractionCommand {
                         ...old_options,
                         ...options,
                     });
+                }
+            };
+        };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static ownerOnly(): any {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (constructor: any) => {
+            return class T extends constructor {
+                requireSpecialPermission = true;
+                onBeforeRun(
+                    context: Interaction.InteractionContext,
+                    //args: Interaction.ParsedArgs,
+                ) {
+                    return !owners.includes(context.userId);
+                }
+            };
+        };
+    }
+
+    static requirePermission(
+        permission:
+            | keyof typeof Constants.Permissions
+            | (keyof typeof Constants.Permissions)[],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ): any {
+        return function <T extends typeof CustomCommand>(
+            constructor: T,
+        ) {
+            //@ts-expect-error we know TS. We KNOW
+            return class extends constructor {
+                requireSpecialPermission = true;
+                onBeforeRun(context: Interaction.InteractionContext) {
+                    const member = context.member;
+                    if (!member) return false;
+                    const required = Array.isArray(permission)
+                        ? permission.map(
+                              (p) => Constants.Permissions[p],
+                          )
+                        : Constants.Permissions[permission];
+                    if (Array.isArray(required)) {
+                        return required.every(
+                            (permission) =>
+                                (member.permissions & permission) ===
+                                permission,
+                        );
+                    }
+                    return (
+                        (member.permissions & required) === required
+                    );
                 }
             };
         };

@@ -1,6 +1,7 @@
 import { Permissions } from 'detritus-client/lib/constants';
 import { RootCommand } from 'packages/commands/RootCommand';
 import { ChatlogCreateCommand } from './chatlog/chatlog.create';
+@RootCommand.requirePermission(['MANAGE_CHANNELS', 'MANAGE_MESSAGES'])
 @RootCommand.applyOptions({
     name: 'chatlog',
     description:

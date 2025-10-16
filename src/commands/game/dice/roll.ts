@@ -1,15 +1,12 @@
 import { CustomCommand } from '@nova/commands/CustomCommand';
 import { CustomContext } from '@nova/commands/CustomInteractionContext';
 import { StringOption } from '@nova/commands/options/StringOption';
-import {
-    ComponentButton,
-    ComponentTextDisplay,
-} from 'detritus-client/lib/utils';
+import { ComponentTextDisplay } from 'detritus-client/lib/utils';
 import { codestring } from 'detritus-client/lib/utils/markup';
-import { readFile } from 'fs/promises';
 @CustomCommand.applyOptions({
     name: 'roll',
-    description: 'roll a dice.',
+    description:
+        'roll a dice. IF a sheet is present and `label` is used, `dice` will be ignored.',
     options: [
         new StringOption()
             .setName('dice')
@@ -59,6 +56,34 @@ export default class RollCommand extends CustomCommand {
                     );
                 if (character) {
                     switch (label) {
+                        case 'fort':
+                            const dFort = `1d20+${character.saves.find((save) => save.abbr === 'Will')?.save || '0'}`;
+                            const {
+                                total: totalFort,
+                                details: detailsFort,
+                            } = this.roll(dFort);
+
+                            const rollsFort: number[] = [];
+                            const rollesFort: string[] = [];
+                            for (const det of detailsFort) {
+                                rollsFort.push(...det.rolls);
+                                rollesFort.push(det.dice);
+                            }
+
+                            const strFort = [
+                                '```js',
+                                rollsFort.join(', '),
+                                '```',
+                            ].join('\n');
+                            const containerFort = [
+                                new ComponentTextDisplay({
+                                    content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(dFort)}: \`${totalFort}\` `,
+                                }),
+                                new ComponentTextDisplay({
+                                    content: strFort,
+                                }),
+                            ];
+                            return ctx.display(containerFort);
                         case 'will':
                             const d = `1d20+${character.saves.find((save) => save.abbr === 'Will')?.save || '0'}`;
                             const { total, details } = this.roll(d);
@@ -113,6 +138,34 @@ export default class RollCommand extends CustomCommand {
                                 }),
                             ];
                             return ctx.display(container2);
+                        case 'ref':
+                            const dref = `1d20+${character.saves.find((save) => save.abbr === 'Will')?.save || '0'}`;
+                            const {
+                                total: totalRef,
+                                details: detailsRef,
+                            } = this.roll(dref);
+
+                            const rollsref: number[] = [];
+                            const rollesref: string[] = [];
+                            for (const det of detailsRef) {
+                                rollsref.push(...det.rolls);
+                                rollesref.push(det.dice);
+                            }
+
+                            const strref = [
+                                '```js',
+                                rollsref.join(', '),
+                                '```',
+                            ].join('\n');
+                            const containerref = [
+                                new ComponentTextDisplay({
+                                    content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(dref)}: \`${totalRef}\` `,
+                                }),
+                                new ComponentTextDisplay({
+                                    content: strref,
+                                }),
+                            ];
+                            return ctx.display(containerref);
                         default:
                     }
                 }

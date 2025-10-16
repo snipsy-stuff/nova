@@ -2,7 +2,6 @@ import { DiscordHTTPError } from '@nova/core/errors';
 import { Interaction } from 'detritus-client';
 import { CustomContext } from './CustomInteractionContext';
 import { BaseCommand } from './BaseCommand';
-import { owners } from '@nova/util/Constants';
 
 export abstract class CustomCommand extends BaseCommand {
     abstract exec(
@@ -22,26 +21,11 @@ export abstract class CustomCommand extends BaseCommand {
                 return ctx.say(
                     [
                         '```json',
-                        JSON.stringify(error.errors, null, 2),
+                        error.name + ':' + error.message,
                         '```',
                     ].join('\n'),
                 );
             }
         }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    static ownerOnly(): any {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (constructor: any) => {
-            return class T extends constructor {
-                onBeforeRun(
-                    context: Interaction.InteractionContext,
-                    //args: Interaction.ParsedArgs,
-                ) {
-                    return owners.includes(context.userId);
-                }
-            };
-        };
     }
 }
