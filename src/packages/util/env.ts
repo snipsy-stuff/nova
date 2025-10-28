@@ -6,6 +6,8 @@ import util from 'node:util';
 interface Env {
     PRIMARY_TOKEN?: string;
     BETA_TOKEN?: string;
+    DISCORD_TOKEN?: string;
+    _DISCORD_TOKEN?: string;
     BOOT_LOG_CHANNEL: string;
     COMMAND_LOG_CHANNEL: string;
     ERROR_LOG_CHANNEL: string;
