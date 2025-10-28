@@ -171,7 +171,7 @@ export default class RollCommand extends CustomCommand {
                 }
             }
         }
-        if (!dice.includes('d')) {
+        if (!dice?.includes('d')) {
             if (isNaN(+dice)) {
                 return ctx.error('invalid dice. example: d20');
             } else {
