@@ -22,11 +22,11 @@
         "experimentalDecorators": true,
         "downlevelIteration": true,
         "paths": {
-            "@nova/typings/*": ["packages/typings/*"],
-            "@nova/listeners/*": ["packages/listeners/*"],
             "@nova/core/*": ["packages/core/*"],
-            "@nova/util/*": ["packages/util/*"],
-            "@nova/commands/*": ["packages/commands/*"]
+            "@nova/listeners/*": ["packages/listeners/*"],
+            "@nova/commands/*": ["packages/commands/*"],
+            "@nova/typings/*": ["packages/typings/*"],
+            "@nova/util/*": ["packages/util/*"]
         },
         "pretty": true
     },

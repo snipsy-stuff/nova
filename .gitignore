@@ -16,11 +16,11 @@ dist/
 .env.local
 *.zip
 /src/generated/prisma
-data/extracted
-data/por_files
-data/sheets
-data/skills
-!data/pathfinder/*
+
+data/*
+
 src/packages/prisma
 .env.local
 /src/generated/prisma
+testing/
+filler_data/

@@ -1,3 +1,5 @@
+import * as lux from 'luxon';
+
 interface ConsoleStyle {
     hexColor?: string;
     bgColor?: string;
@@ -32,9 +34,16 @@ export class Logger {
         );
     }
 
+    private getTime() {
+        return lux.DateTime.fromJSDate(new Date()).toFormat(
+            'ccc: HH:mm:ss',
+        );
+    }
+
     private $write(content: string, type: keyof Logger['types']) {
+        const time = this.getTime(); // TODO: use luxon
         return console[type === 'ERROR' ? 'error' : 'log'](
-            `[${this.name}] [${styleText(type, {
+            `[${time}] [${this.name}] [${styleText(type, {
                 hexColor: Colors[type],
                 bold: true,
                 underline: true,

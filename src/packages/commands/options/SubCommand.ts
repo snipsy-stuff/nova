@@ -1,4 +1,5 @@
-import { Interaction } from 'detritus-client';
+import { owners } from '@nova/util/Constants';
+import { Constants, Interaction } from 'detritus-client';
 import { ApplicationCommandOptionTypes } from 'detritus-client/lib/constants';
 import { CustomContext } from 'packages/commands/CustomInteractionContext';
 
@@ -47,6 +48,55 @@ export abstract class SubCommand extends Interaction.InteractionCommandOption {
                         ...options,
                         type: ApplicationCommandOptionTypes.SUB_COMMAND,
                     });
+                }
+            };
+        };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static ownerOnly(): any {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (constructor: any) => {
+            return class T extends constructor {
+                requireSpecialPermission = true;
+                onBeforeRun(context: Interaction.InteractionContext) {
+                    return !owners.includes(context.userId);
+                }
+            };
+        };
+    }
+
+    static requirePermission(
+        permission:
+            | keyof typeof Constants.Permissions
+            | (keyof typeof Constants.Permissions)[],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ): any {
+        return function <T extends typeof SubCommand>(
+            constructor: T,
+        ) {
+            //@ts-expect-error we know TS. We KNOW
+            return class extends constructor {
+                requireSpecialPermission = true;
+
+                onBeforeRun(context: Interaction.InteractionContext) {
+                    const member = context.member;
+                    if (!member) return false;
+                    const required = Array.isArray(permission)
+                        ? permission.map(
+                              (p) => Constants.Permissions[p],
+                          )
+                        : Constants.Permissions[permission];
+                    if (Array.isArray(required)) {
+                        return required.every(
+                            (permission) =>
+                                (member.permissions & permission) ===
+                                permission,
+                        );
+                    }
+                    return (
+                        (member.permissions & required) === required
+                    );
                 }
             };
         };

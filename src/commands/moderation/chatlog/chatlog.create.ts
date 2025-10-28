@@ -106,8 +106,6 @@ export class ChatlogCreateCommand extends SubCommand {
             }),
         });
         if (!resp.ok) {
-            console.log('ye');
-
             console.log(await resp.json());
             return message.edit('idk broke ig.');
         }

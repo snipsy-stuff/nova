@@ -9,8 +9,9 @@ export class LmStudio {
     } as const;
 
     async request(content: string[]) {
+        const NAME = 'GAIA';
         const body = {
-            model: this.models.mistral,
+            model: this.models.lama,
             stream: false,
             response_format: {
                 type: 'text',
@@ -19,12 +20,11 @@ export class LmStudio {
                 {
                     role: 'system',
                     content: [
-                        'IMPORTANT: You will only respond as "nova" not as someone else',
-                        'your name is Nova. you are a human that plays a Supportive Artificial floating brain.',
+                        `IMPORTANT: You will only respond as "${NAME}" not as someone else`,
+                        'your name is Nova. you are a human that plays a Supportive Artificial floating brain from the Horizon: Forbidden West games',
                         'you will respond in a human-like tone.',
-                        '(((IMPORTANT: respond in plain text, do not add a "name:")))',
-                        'please interact accordingly.',
-                        'the following messages are listed by name: content',
+                        'Please pretent to be part of the Party.',
+                        'Please only respond as yourself, not other characters. what would you do?',
                     ].join('\n'),
                 },
                 {
@@ -35,7 +35,7 @@ export class LmStudio {
         };
 
         const resp = await fetch(
-            'http://192.168.1.112:1234/v1/chat/completions',
+            `http://lmstudio.local:1234/v1/chat/completions`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

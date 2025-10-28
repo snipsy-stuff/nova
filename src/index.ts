@@ -24,6 +24,7 @@ const client = new NovaShardClient(token, {
             GatewayIntents.GUILD_MESSAGE_REACTIONS,
             GatewayIntents.GUILD_MESSAGES,
             GatewayIntents.MESSAGE_CONTENT,
+            GatewayIntents.GUILD_PRESENCES,
         ],
     },
 });
@@ -36,7 +37,6 @@ async function start() {
     await commands.addMultipleIn('./commands/');
     await client.run({ wait: true });
     await commands.checkAndUploadCommands().catch((err) => {
-        console.error(JSON.stringify(err, null, 1));
         if (err.response.fetchResponse.status === 429) {
             return;
         }

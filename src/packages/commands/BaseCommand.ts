@@ -2,6 +2,8 @@ import { NovaShardClient } from '@nova/core/client/ShardClient';
 import { owners } from '@nova/util/Constants';
 import { Constants, Interaction } from 'detritus-client';
 import { CustomCommand } from './CustomCommand';
+import { CustomContext } from './CustomInteractionContext';
+import { ParsedArgs } from 'detritus-client/lib/interaction';
 
 export class BaseCommand extends Interaction.InteractionCommand {
     disabled = false;
@@ -11,7 +13,7 @@ export class BaseCommand extends Interaction.InteractionCommand {
     ): Promise<boolean> | boolean {
         const client = context.client as NovaShardClient;
         client.logger.log(
-            `[COMMAND_RUN] running command ${this.name}`,
+            `[COMMAND_RUN] ${context.user.name} running command ${this.name}`,
         );
         client.stats.commands++;
         return true;
@@ -66,8 +68,15 @@ export class BaseCommand extends Interaction.InteractionCommand {
             //@ts-expect-error we know TS. We KNOW
             return class extends constructor {
                 requireSpecialPermission = true;
-                onBeforeRun(context: Interaction.InteractionContext) {
-                    const member = context.member;
+                onBeforeRun(
+                    context: Interaction.InteractionContext,
+                    args: ParsedArgs,
+                ) {
+                    const ctx = CustomContext.fromContext(
+                        context,
+                        args,
+                    );
+                    const member = ctx.member;
                     if (!member) return false;
                     const required = Array.isArray(permission)
                         ? permission.map(

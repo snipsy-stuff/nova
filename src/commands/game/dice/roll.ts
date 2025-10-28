@@ -205,10 +205,9 @@ export default class RollCommand extends CustomCommand {
         details: DiceResult[];
     } {
         const blessed = 69;
-        const cursed = 66;
+        const cursed = 666;
 
         const change = Math.floor(Math.random() * 10000);
-        //TODO: make it
         const blessedOrCursed: 'blessed' | 'cursed' | undefined =
             change === blessed
                 ? 'blessed'
