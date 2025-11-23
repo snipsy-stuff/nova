@@ -5,10 +5,10 @@ import { parseEnv } from '@nova/util/env';
 import { ChannelGuildText } from 'detritus-client/lib/structures';
 import { setTimeout } from 'timers/promises';
 
+@SubCommand.requirePermission('MANAGE_MESSAGES')
 @SubCommand.applyOptions({
     name: 'create',
     description: 'creates the chatlog.',
-    permissions: [1n << 13n],
     options: [
         new TextChannelOption()
             .setName('channel')

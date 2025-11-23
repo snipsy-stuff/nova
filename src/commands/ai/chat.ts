@@ -39,6 +39,7 @@ export default class AIChatCommand extends CustomCommand {
         }>,
     ) {
         const model = ctx.args.model;
+        if (this.disabled) return ctx.error('command disabled.');
 
         const ai = new LmStudio();
         await ctx.say('thinking...');

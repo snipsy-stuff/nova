@@ -58,6 +58,7 @@ export class SheetAddCommand extends SubCommand {
             return ctx.error('failed to fetch the sheet data.');
         }
 
+        await ctx.client.games.pathfinder.sheets.createIndex();
         const filecontent = Buffer.from(await data.arrayBuffer());
         const player = ctx.args.user?.id ?? ctx.user.id;
         await writeFile(dir, filecontent, { flag: 'w' });
@@ -128,7 +129,7 @@ export class SheetAddCommand extends SubCommand {
 
         return ctx
             .say(
-                `✅ successfully created the ${char?.name} character sheet for ${!p ? 'the Dm' : p?.mention}.\nHere some basic info:`,
+                `${ctx.emote('success')} successfully imported and parsed the ${char?.name} character sheet for ${!p ? 'the Dm' : p?.mention}.\nHere some basic info:`,
                 {
                     flags: MessageFlags.EPHEMERAL,
                     embeds: [embed],

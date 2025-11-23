@@ -2,6 +2,7 @@
 import { CustomListener } from '@nova/listeners/CustomListener';
 import { GatewayClientEvents } from 'detritus-client';
 import { ActivityTypes } from 'detritus-client/lib/constants';
+import { ChannelGuildText } from 'detritus-client/lib/structures';
 import { setTimeout as asyncTimeout } from 'timers/promises';
 
 const possibleSTatuses = [
@@ -28,7 +29,7 @@ const possibleSTatuses = [
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.GatewayReady) {
-        const enbaled = false;
+        const enbaled = true;
         await this.client.setPresence({
             activities: [
                 possibleSTatuses[
@@ -51,7 +52,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
         }
 
         const guilds = app.approximateGuildCount;
-        const users = app?.approximateUserInstallCount;
+        const users = app.approximateUserInstallCount;
         this.client.logger.log(
             `${data.raw.user.username} is now ready.` +
                 `Installed on ${guilds} Server(s) and ${users} user(s) `,
@@ -91,10 +92,13 @@ export default class ClientGatewayReadyEvent extends CustomListener {
             const fetched = await fetch(printer);
             const ok = fetched.ok;
 
+            const channel = '1408764370665607243';
+
             if (!ok) {
                 delete printers[pr];
                 continue;
             }
+
             const data = await fetched.json();
             const state = data?.result?.status?.print_stats?.state;
             switch (state) {
@@ -114,6 +118,28 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                     delete printers[pr];
                     break;
                 case STATES.printing:
+                    if (pr !== 'milkyway') break;
+                    const currentImg = await fetch(
+                        'http://milkyway.printer/webcam/?action=snapshot',
+                    );
+                    const { total_layer, current_layer } =
+                        data.result.status.print_stats.info;
+                    await (
+                        this.client.channels.get(
+                            channel,
+                        ) as ChannelGuildText
+                    ).createMessage({
+                        content: `${current_layer}/${total_layer}`,
+                        files: [
+                            {
+                                value: Buffer.from(
+                                    await currentImg.arrayBuffer(),
+                                ),
+                                filename: 'img.png',
+                                contentType: 'image/png',
+                            },
+                        ],
+                    });
                     break;
                 case STATES.error:
                     console.log(`${pr} errored. check machine!`);

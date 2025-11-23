@@ -10,7 +10,7 @@ import { codestring } from 'detritus-client/lib/utils/markup';
     options: [
         new StringOption()
             .setName('dice')
-            .setRequired(false)
+            .setRequired(true)
             .setDescription(
                 'the die to roll, ignored if `label` is registered.',
             ),
@@ -131,7 +131,7 @@ export default class RollCommand extends CustomCommand {
                             ].join('\n');
                             const container2 = [
                                 new ComponentTextDisplay({
-                                    content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(d2)}: \`${total2}\` `,
+                                    content: `:game_die:${label ? ` [${label} save]` : ''} ${codestring(d2)}: \`${total2}\` `,
                                 }),
                                 new ComponentTextDisplay({
                                     content: str2,
@@ -159,7 +159,7 @@ export default class RollCommand extends CustomCommand {
                             ].join('\n');
                             const containerref = [
                                 new ComponentTextDisplay({
-                                    content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(dref)}: \`${totalRef}\` `,
+                                    content: `:game_die:${label ? ` [${label} save]` : ''} ${codestring(dref)}: \`${totalRef}\` `,
                                 }),
                                 new ComponentTextDisplay({
                                     content: strref,

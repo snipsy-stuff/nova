@@ -3,7 +3,7 @@ import { CustomContext } from '@nova/commands/CustomInteractionContext';
 @CustomCommand.applyOptions({
     name: 'help',
 
-    description: 'pinging the bot. check if it is still alive.',
+    description: 'help!!!.',
 })
 export default class PingCommand extends CustomCommand {
     exec(

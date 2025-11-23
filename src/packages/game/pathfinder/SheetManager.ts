@@ -3,7 +3,13 @@
 import { Parser } from 'xml2js';
 import { exec } from 'child_process';
 import { parse } from 'path';
-import { copyFile, mkdir, readFile, writeFile } from 'fs/promises';
+import {
+    copyFile,
+    mkdir,
+    readFile,
+    stat,
+    writeFile,
+} from 'fs/promises';
 import { Logger } from '@nova/util/Logger';
 import { generateRandomBase64 } from '@nova/util/Util';
 import {
@@ -40,11 +46,34 @@ export class SheetManager {
     }
 
     async list() {
+        await this.createIndex();
         return JSON.parse(
             await readFile('./data/sheets/index.json', {
                 encoding: 'utf-8',
             }),
         ) as SheetIndexData[];
+    }
+
+    async createIndex() {
+        const existing = await stat('./data/sheets/index.json')
+            .then((data) => data.isFile())
+            .catch(() => false);
+
+        if (existing) return;
+        return writeFile('./data/sheets/index.json', []);
+    }
+
+    async update(character: string, updated: Partial<SheetData>) {
+        const old = await this.get(character);
+        const sheets = await this.list();
+        const indx = sheets.find((char) => char.name === character);
+        if (!indx) throw 0;
+        const data = {
+            ...old,
+            ...updated,
+        };
+        await writeFile(indx?.path, JSON.stringify(data, null, 2));
+        return;
     }
 
     async create(
