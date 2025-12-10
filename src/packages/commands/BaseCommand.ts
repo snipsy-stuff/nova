@@ -56,6 +56,17 @@ export class BaseCommand extends Interaction.InteractionCommand {
         };
     }
 
+    static applyMetaData(metadata: Record<string, unknown>) {
+        return function <T extends typeof CustomCommand>(
+            constructor: T,
+        ) {
+            //@ts-expect-error we know TS. We KNOW
+            return class extends constructor {
+                metadata = metadata;
+            };
+        };
+    }
+
     static requirePermission(
         permission:
             | keyof typeof Constants.Permissions

@@ -9,10 +9,6 @@ import { GatewayClientEvents } from 'detritus-client';
 })
 export default class GuildChannelCreate extends CustomListener {
     async run(data: GatewayClientEvents.ChannelCreate) {
-        const enbaled = false;
-
-        if (!enbaled) return false;
-
         console.log(`new channel ${data.channel.name}`);
     }
 }

@@ -29,7 +29,7 @@ const possibleSTatuses = [
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.GatewayReady) {
-        const enbaled = true;
+        const enbaled = false;
         await this.client.setPresence({
             activities: [
                 possibleSTatuses[
@@ -50,6 +50,10 @@ export default class ClientGatewayReadyEvent extends CustomListener {
         if (!app) {
             throw app;
         }
+        this.client.logger.debug(
+            `Following events are loaded:\n${this.handler.modules.map((m) => m.id).join(',\n')}`,
+            'INIT_CLIENT_LOAD',
+        );
 
         const guilds = app.approximateGuildCount;
         const users = app.approximateUserInstallCount;

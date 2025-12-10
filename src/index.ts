@@ -39,6 +39,7 @@ async function start() {
     listeners.addHandler('commands', commands);
     await listeners.loadAll();
     await commands.addMultipleIn('./commands/');
+    await client.start();
     await client.run({ wait: true });
     await commands.checkAndUploadCommands().catch((err) => {
         if (err.response.fetchResponse.status === 429) {

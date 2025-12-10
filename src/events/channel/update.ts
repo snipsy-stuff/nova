@@ -9,11 +9,6 @@ import { GatewayClientEvents } from 'detritus-client';
 })
 export default class GuildChannelUPDATE extends CustomListener {
     async run(data: GatewayClientEvents.ChannelUpdate) {
-        const enbaled = false;
-
-        if (!enbaled) return false;
-        console.log(data.differences);
-
         console.log(`updated channel ${data.channel.name}`);
     }
 }

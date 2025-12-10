@@ -9,10 +9,6 @@ import { GatewayClientEvents } from 'detritus-client';
 })
 export default class GuildChannelUPDATE extends CustomListener {
     async run(data: GatewayClientEvents.ChannelDelete) {
-        const enbaled = false;
-
-        if (!enbaled) return false;
-
         console.log(`deleted channel ${data.channel.name}`);
     }
 }

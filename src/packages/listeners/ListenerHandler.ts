@@ -43,6 +43,7 @@ export class CustomListenerHandler extends EventEmitter {
             const obj = await import(file).then(
                 (data) => data.default.default,
             );
+
             if (!obj) return;
 
             const f = new obj();
@@ -52,15 +53,17 @@ export class CustomListenerHandler extends EventEmitter {
             }
             f.client = this.client;
             if (!f.enabled) return;
-
+            f.handler = this;
             handler[f.type as 'on'](f.event, (...args: unknown[]) => {
                 return this.modules.get(f.id)?.run(...args);
             });
+
             this.modules.set(f.id, f);
             this.emit('events_load', {
                 event: f,
             });
         } catch (error) {
+            console.error(`Error on file: ${file}`, error);
             this.emit('error', {
                 file,
                 error,

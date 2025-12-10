@@ -1,4 +1,5 @@
 import {
+    Guild,
     Interaction,
     InteractionEditOrRespond,
 } from 'detritus-client/lib/structures';
@@ -71,7 +72,10 @@ export class CustomContext<
         );
     }
 
-    async display(displays: ComponentTextDisplay[]) {
+    async display(
+        displays: ComponentTextDisplay[],
+        options?: InteractionEditOrRespond,
+    ) {
         const components = new ComponentContainer();
         const length = displays.length;
         for (let i = 0; i < displays.length; i++) {
@@ -87,9 +91,15 @@ export class CustomContext<
         components.addTextDisplay({
             content: `Requested by ${this.user.name}`,
         });
+        if (Array.isArray(options?.components)) {
+            options.components = [components, ...options.components];
+        }
         return this.send({
-            flags: MessageFlags.IS_COMPONENTS_V2,
-            components: [components],
+            ...options,
+            flags:
+                MessageFlags.IS_COMPONENTS_V2 &
+                MessageFlags.EPHEMERAL,
+            // components: [components],
         });
     }
 
@@ -123,3 +133,7 @@ export class CustomContext<
 }
 
 export type Context = CustomContext<Record<'', undefined>>;
+export interface GuildContext<T extends ParsedArgs>
+    extends CustomContext<T> {
+    guild: Guild;
+}
