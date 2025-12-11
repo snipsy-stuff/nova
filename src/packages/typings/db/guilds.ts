@@ -6,5 +6,6 @@ export interface GuildSetings {
 interface Starboard {
     enabled: boolean;
     channel: string;
+    messages: string[];
     emojis: { count: number; id: string }[];
 }

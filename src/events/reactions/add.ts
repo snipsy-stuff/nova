@@ -33,10 +33,12 @@ export default class ClientGatewayReadyEvent extends CustomListener {
         const hit = settings.starboard.emojis.find(
             (em) => data.reaction.emoji.id === em.id,
         );
+        console.log(hit);
 
         if (hit) {
+            settings.starboard.messages.push(data.messageId);
             const count = data.reaction.count;
-
+            console.log(`message was reacted.`);
             if (count >= hit.count) {
                 const channel = (this.client.channels.get(
                     settings.starboard.channel,
@@ -47,13 +49,37 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                 if (!channel) return;
                 if (!channel.canMessage && channel.canEmbedLinks)
                     return;
+
+                const content = msg.content.length
+                    ? msg.content.length >= 2000
+                        ? msg.content.slice(0, 2000) + '...'
+                        : ''
+                    : msg.attachments.length
+                      ? `[no content. ${msg.attachments.length} attachments]`
+                      : msg.embeds.length
+                        ? `[no content. ${msg.embeds.length} embeds]`
+                        : msg.stickers.length
+                          ? `Send a sticker: ${msg.stickers.first()?.name}`
+                          : '[unknown content]';
                 const embed = new Embed();
                 embed
                     .setAuthor(user.name, user.avatarUrl)
                     .setFooter(`#${msg.channel.name}`)
                     .setTimestamp()
                     .setDescription(
-                        `<${data.reaction.emoji.animated ? 'a:' : ''}${data.reaction.emoji.name}:${data.reaction.emoji.id}> **${count}** [link](${msg.jumpLink})\n${msg.content.slice(0, 2000)}${msg.content.length >= 2000 ? '...' : ''}`,
+                        `<${data.reaction.emoji.animated ? 'a:' : ''}${data.reaction.emoji.name}:${data.reaction.emoji.id}> **${count}** [link](${msg.jumpLink})\n${content}`,
+                    );
+
+                await channel.createMessage({ embeds: [embed] });
+                await this.client.db
+                    .collection<GuildSetings>('guild_settings')
+                    .updateOne(
+                        { guildId: data.guildId },
+                        {
+                            $set: {
+                                ...settings,
+                            },
+                        },
                     );
             }
         }

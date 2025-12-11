@@ -1,27 +1,12 @@
-import { CustomCommand } from '@nova/commands/CustomCommand';
-import {
-    // CustomContext,
-    GuildContext,
-} from '@nova/commands/CustomInteractionContext';
 import { AutoComplete } from '@nova/commands/options/AutoComplete';
-import { ChannelOption } from '@nova/commands/options/channels/BaseChannel';
-import { TextChannelOption } from '@nova/commands/options/channels/TextChannelOption';
-import { NumberOption } from '@nova/commands/options/NumberOption';
-import { StringOption } from '@nova/commands/options/StringOption';
-import { GuildSetings } from '@nova/typings/db/guilds';
-import { colorizeText } from '@nova/util/Util';
-import { ChannelTypes } from 'detritus-client/lib/constants';
 import { ChannelGuildText } from 'detritus-client/lib/structures';
-// import { ComponentActionRow } from 'detritus-client/lib/structures';
-import {
-    ComponentTextDisplay,
-    ComponentActionRow,
-    ComponentButton,
-} from 'detritus-client/lib/utils';
-import { bold } from 'detritus-client/lib/utils/markup';
-import { RootCommand } from 'packages/commands/RootCommand';
-@RootCommand.requirePermission(['MANAGE_GUILD'])
-@RootCommand.applyOptions({
+import { GuildContext } from '@nova/commands/CustomInteractionContext';
+import { GuildSetings } from '@nova/typings/db/guilds';
+import { NumberOption } from '@nova/commands/options/NumberOption';
+import { SubCommand } from '@nova/commands/options/SubCommand';
+import { TextChannelOption } from '@nova/commands/options/channels/TextChannelOption';
+
+@SubCommand.applyOptions({
     name: 'starboard',
     description: 'setup sa reaction triggered starboard',
     options: [
@@ -62,7 +47,7 @@ import { RootCommand } from 'packages/commands/RootCommand';
             ),
     ],
 })
-export default class SetupCommand extends CustomCommand {
+export class StarboardSetupCommand extends SubCommand {
     async exec(
         ctx: GuildContext<{
             channel: ChannelGuildText;
@@ -81,6 +66,7 @@ export default class SetupCommand extends CustomCommand {
                 starboard: {
                     enabled: true,
                     channel: ctx.args.channel.id,
+                    messages: [],
                     emojis: [
                         {
                             count: ctx.args.count || 2,
@@ -96,7 +82,7 @@ export default class SetupCommand extends CustomCommand {
             count: ctx.args.count,
             id: ctx.args.emoji,
         });
-        const data = await collection.updateOne(
+        await collection.updateOne(
             {
                 guildId: ctx.guildId,
             },
@@ -105,10 +91,15 @@ export default class SetupCommand extends CustomCommand {
                     starboard: {
                         enabled: true,
                         channel: ctx.args.channel.id,
+                        messages: existing.starboard.messages,
                         emojis: existing?.starboard.emojis,
                     },
                 },
             },
+        );
+        return ctx.say(
+            `successfully created the starboard in ${ctx.channel}.`,
+            { flags: 64 },
         );
     }
 
