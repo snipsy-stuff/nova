@@ -18,10 +18,19 @@ import {
     type: 'on',
     enabled: true,
 })
-export default class GuildChannelUPDATE extends CustomListener {
+export default class GuildMemberAdd extends CustomListener {
     async run(data: GatewayClientEvents.GuildMemberAdd) {
+        if (data.isDuplicate) return;
         const member = data.member;
+        const settings = await this.client.db.guilds.findOne({
+            guildId: data.guildId,
+        });
 
+        const guild = this.client.guilds.get(data.guildId);
+        if (!guild) return;
+        if (!settings) return;
+        if (!settings.mod_log?.enabled) return;
+        if (!settings.mod_log.members) return;
         const embed = new Embed();
 
         const actions = new ComponentActionRow();

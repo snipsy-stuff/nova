@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 import { CustomListener } from '@nova/listeners/CustomListener';
+import { GuildSetings } from '@nova/typings/db/guilds';
+import { defaultSettings } from '@nova/util/Constants';
 import { GatewayClientEvents } from 'detritus-client';
 import { ActivityTypes } from 'detritus-client/lib/constants';
 import { ChannelGuildText } from 'detritus-client/lib/structures';
@@ -55,6 +57,25 @@ export default class ClientGatewayReadyEvent extends CustomListener {
             'INIT_CLIENT_LOAD',
         );
 
+        const botGuilds = this.client.guilds.map((guild) => guild.id);
+        const toSave: GuildSetings[] = [];
+        const col = this.client.db.guilds;
+        const guildSettings = await col.find({}).toArray();
+
+        for (const guild of botGuilds) {
+            const existing = guildSettings.find(
+                (g) => g.guildId === guild,
+            );
+            if (!existing) {
+                toSave.push({
+                    ...defaultSettings,
+                    guildId: guild,
+                });
+            }
+        }
+        if (toSave.length) {
+            await col.insertMany(toSave);
+        }
         const guilds = app.approximateGuildCount;
         const users = app.approximateUserInstallCount;
         this.client.logger.log(

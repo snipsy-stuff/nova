@@ -46,7 +46,7 @@ export class CustomContext<
         if (!this.guild && !this.inDm) {
             return emotes.default[emote];
         }
-        if (!this.guild && !this.inDm) return emotes.custom[emote];
+        if (!this.guild && this.inDm) return emotes.custom[emote];
         if (this.me?.can(Permissions.USE_EXTERNAL_EMOJIS)) {
             return emotes.custom[emote];
         }
@@ -133,7 +133,9 @@ export class CustomContext<
 }
 
 export type Context = CustomContext<Record<'', undefined>>;
-export interface GuildContext<T extends ParsedArgs>
-    extends CustomContext<T> {
+export interface GuildContext<
+    T extends ParsedArgs,
+> extends CustomContext<T> {
     guild: Guild;
 }
+export type NoArgGuildContext = GuildContext<Record<'', undefined>>;

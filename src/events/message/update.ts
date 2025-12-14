@@ -21,5 +21,13 @@ export default class ClientGatewayReadyEvent extends CustomListener {
         if (!msg.channel || msg.author.bot || data.isEmbedUpdate)
             return;
         console.log(`message updated: ${msg.id}`);
+        if (!data.differences) return;
+        if (msg.guild) {
+            if (data.differences.content) {
+                this.client.db.guilds.findOne({
+                    guildId: msg.guild?.id,
+                });
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 import { CustomListener } from '@nova/listeners/CustomListener';
-import { GuildSetings } from '@nova/typings/db/guilds';
+import { contentTypes } from '@nova/util/Constants';
 import { GatewayClientEvents } from 'detritus-client';
 import { ChannelGuildText } from 'detritus-client/lib/structures';
 import { Embed } from 'detritus-client/lib/utils';
@@ -25,55 +25,137 @@ export default class ClientGatewayReadyEvent extends CustomListener {
         if (user.bot) return;
         if (!data.guildId) return;
         if (!msg.channel) return;
-        const settings = await this.client.db
-            .collection<GuildSetings>('guild_settings')
-            .findOne({ guildId: data.guildId });
-        if (!settings?.starboard?.enabled) return;
+        const settings = await this.client.db.guilds.findOne({
+            guildId: data.guildId,
+        });
+        if (!settings) return;
 
-        const hit = settings.starboard.emojis.find(
-            (em) => data.reaction.emoji.id === em.id,
-        );
-        console.log(hit);
-
-        if (hit) {
-            settings.starboard.messages.push(data.messageId);
-            const count = data.reaction.count;
-            console.log(`message was reacted.`);
-            if (count >= hit.count) {
+        if (settings.mod_log) {
+            if (
+                settings.mod_log.enabled &&
+                settings.mod_log.reactions
+            ) {
+                const embed = new Embed()
+                    .setColor(0x57fc41)
+                    .setDescription(
+                        [
+                            `${user.name} reacted in <#${data.channelId}>`,
+                            `-# Message by @${msg.author.name}`,
+                            '',
+                            `Reaction Emoji: ${data.reaction.emoji.format} `,
+                        ].join('\n'),
+                    );
                 const channel = (this.client.channels.get(
-                    settings.starboard.channel,
+                    settings.mod_log.channel,
                 ) ||
                     (await this.client.rest.fetchChannel(
-                        settings.starboard.channel,
+                        settings.mod_log.channel,
                     ))) as ChannelGuildText;
                 if (!channel) return;
                 if (!channel.canMessage && channel.canEmbedLinks)
                     return;
-
-                const content = msg.content.length
-                    ? msg.content.length >= 2000
-                        ? msg.content.slice(0, 2000) + '...'
-                        : ''
-                    : msg.attachments.length
-                      ? `[no content. ${msg.attachments.length} attachments]`
-                      : msg.embeds.length
-                        ? `[no content. ${msg.embeds.length} embeds]`
-                        : msg.stickers.length
-                          ? `Send a sticker: ${msg.stickers.first()?.name}`
-                          : '[unknown content]';
-                const embed = new Embed();
-                embed
-                    .setAuthor(user.name, user.avatarUrl)
-                    .setFooter(`#${msg.channel.name}`)
-                    .setTimestamp()
-                    .setDescription(
-                        `<${data.reaction.emoji.animated ? 'a:' : ''}${data.reaction.emoji.name}:${data.reaction.emoji.id}> **${count}** [link](${msg.jumpLink})\n${content}`,
-                    );
-
                 await channel.createMessage({ embeds: [embed] });
-                await this.client.db
-                    .collection<GuildSetings>('guild_settings')
-                    .updateOne(
+            }
+        }
+        if (settings.star_board) {
+            if (settings.star_board.channel === data.channelId)
+                return;
+            const hit = settings.star_board.emojis.find(
+                (em) => data.reaction.emoji.id === em.id,
+            );
+            console.log(hit);
+            if (hit) {
+                if (!settings.star_board.messages) {
+                    settings.star_board.messages = [];
+                }
+                settings.star_board.messages.push(data.messageId);
+                if (data.messageAuthorId === data.userId) return;
+                const count = data.reaction.count;
+                console.log(`message was reacted.`);
+                if (count >= hit.count) {
+                    const channel = (this.client.channels.get(
+                        settings.star_board.channel,
+                    ) ||
+                        (await this.client.rest.fetchChannel(
+                            settings.star_board.channel,
+                        ))) as ChannelGuildText;
+                    if (!channel) return;
+                    if (!channel.canMessage && channel.canEmbedLinks)
+                        return;
+                    console.log(msg.embeds);
+
+                    const content = msg.content.length
+                        ? msg.content.length >= 2000
+                            ? msg.content.slice(0, 2000) + '...'
+                            : ''
+                        : msg.attachments.length
+                          ? `[no content. ${msg.attachments.length} attachments]`
+                          : msg.embeds.length
+                            ? `[no content. ${msg.embeds.length} embeds]`
+                            : msg.stickers.length
+                              ? `Send a sticker: ${msg.stickers.first()?.name}`
+                              : '[unknown content]';
+                    const embed = new Embed();
+                    let img: Buffer | undefined;
+                    let t: string | undefined;
+                    if (msg.attachments.length) {
+                        const first = msg.attachments.first();
+                        if (first?.contentType) {
+                            if (
+                                contentTypes.images.includes(
+                                    first.contentType,
+                                ) &&
+                                first.isImage
+                            ) {
+                                img = Buffer.from(
+                                    await (
+                                        await fetch(first.proxyUrl)
+                                    ).arrayBuffer(),
+                                );
+                                if (first.contentType === 'image/gif')
+                                    t = 'gif';
+                                else t = 'png';
+                                embed.setImage(
+                                    `Attachment://image.${t}`,
+                                );
+                            }
+                        }
+                    }
+                    embed
+                        .setAuthor(
+                            msg.author.name,
+                            msg.author.avatarUrl,
+                        )
+                        .setFooter(`#${msg.channel.name}`)
+                        .setColor(0xcdccff)
+
+                        .setTimestamp()
+                        .setDescription(
+                            `<${
+                                data.reaction.emoji.animated
+                                    ? 'a:'
+                                    : ''
+                            }${data.reaction.emoji.name}:${data.reaction.emoji.id}> **${count}** [link](${msg.jumpLink})\n${content}`,
+                        );
+
+                    await channel.createMessage({
+                        embeds: [embed],
+                        files:
+                            img && t
+                                ? [
+                                      {
+                                          filename: `image.${t}`,
+                                          value: img,
+                                      },
+                                  ]
+                                : undefined,
+                    });
+                    if (data.message?.canReact) {
+                        await data.message.react(
+                            settings.star_board.react_emoji,
+                        );
+                    }
+                    await this.client.db.guilds.updateOne(
                         { guildId: data.guildId },
                         {
                             $set: {
@@ -81,6 +163,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                             },
                         },
                     );
+                }
             }
         }
     }

@@ -3,7 +3,8 @@ import { ShardClient } from 'detritus-client';
 import { PresenceOptions } from 'detritus-client-socket/lib/gateway';
 import { LmStudio } from 'packages/ai/LMStudio';
 import { GameManager } from 'packages/game/GameManager';
-import { Db, MongoClient } from 'mongodb';
+import { MongoClient } from 'mongodb';
+import { DbClient } from './DbClient';
 
 export class NovaShardClient extends ShardClient {
     logger = new Logger('nova');
@@ -15,11 +16,12 @@ export class NovaShardClient extends ShardClient {
     mongodb = new MongoClient(
         'mongodb://localhost:27017/novabot?appname=novaclient',
     );
-    db!: Db;
+    db!: DbClient;
 
     async start() {
         await this.mongodb.connect();
-        this.db = this.mongodb.db('novabot');
+        this.db = new DbClient(this.mongodb.db('novabot'));
+        this.logger.debug('db connected.', 'db-startup');
     }
     setPresence(presence: PresenceOptions) {
         return new Promise((res, rej) => {

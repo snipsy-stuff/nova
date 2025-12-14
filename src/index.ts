@@ -37,16 +37,35 @@ const listeners = new CustomListenerHandler(client);
 
 async function start() {
     listeners.addHandler('commands', commands);
+    client.logger.debug('loading events', 'start-up');
     await listeners.loadAll();
+    client.logger.debug(
+        `loaded ${listeners.modules.length} events, loading commands.`,
+        'start-up',
+    );
     await commands.addMultipleIn('./commands/');
+    client.logger.debug(
+        `loaded ${commands.commands.length} commands, connecting to the db`,
+        'start-up',
+    );
+
     await client.start();
+    client.logger.debug(
+        'connected. Reaching out to Discord.',
+        'start-up',
+    );
     await client.run({ wait: true });
+    client.logger.debug(
+        `Done. Uploading ${commands.commands.length} commands to Discord.`,
+        'start-up',
+    );
     await commands.checkAndUploadCommands().catch((err) => {
         if (err.response.fetchResponse.status === 429) {
             return;
         }
         throw err;
     });
+    client.logger.debug(`Done. Running command client.`, 'start-up');
     await commands.run({ wait: true });
 }
 
