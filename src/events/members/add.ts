@@ -56,6 +56,7 @@ export default class GuildMemberAdd extends CustomListener {
                 member.avatarUrlFormat('png'),
             )
             .setTimestamp(Date.now())
+
             .setDescription(
                 [
                     `**Account created**: ${timestamp(member.user.createdAt)}`,

@@ -36,6 +36,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                 const embed = new Embed()
                     .setColor(0xbc2e29)
                     .setAuthor(msg.author.name, msg.author.avatarUrl)
+                    .setThumbnail(msg.author.avatarUrl)
                     .setTimestamp()
                     .setDescription(
                         `Message Deleted in #${msg.channel.name}\n${msg.content ?? '<no content>'}`,

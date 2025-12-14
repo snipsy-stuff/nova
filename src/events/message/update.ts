@@ -46,9 +46,10 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                 const embed = new Embed()
                     .setColor(0xbc2e29)
                     .setAuthor(msg.author.name, msg.author.avatarUrl)
+                    .setThumbnail(msg.author.avatarUrl)
                     .setTimestamp()
                     .setDescription(
-                        `Message updatedd in #${msg.channel.name}\n## old${msg.content ?? '<no content>'}\n## new ${data.differences.content}`,
+                        `Message updatedd in #${msg.channel.name}\n## old Content\n${msg.content ?? '<no content>'}\n## new Content:\n${data.differences.content}`,
                     );
 
                 if (channel.canMessage && channel.canEmbedLinks) {

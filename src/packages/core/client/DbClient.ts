@@ -8,6 +8,6 @@ export class DbClient {
     }
 
     get guilds() {
-        return this.db.collection<GuildSetings>('guild_Settings');
+        return this.db.collection<GuildSetings>('guild_settings');
     }
 }

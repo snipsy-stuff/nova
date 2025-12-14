@@ -137,5 +137,6 @@ export interface GuildContext<
     T extends ParsedArgs,
 > extends CustomContext<T> {
     guild: Guild;
+    guildId: string;
 }
 export type NoArgGuildContext = GuildContext<Record<'', undefined>>;
