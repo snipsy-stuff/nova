@@ -38,7 +38,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                     .setAuthor(msg.author.name, msg.author.avatarUrl)
                     .setTimestamp()
                     .setDescription(
-                        `Message Deleted in #${msg.channel.name}\n${msg.content}`,
+                        `Message Deleted in #${msg.channel.name}\n${msg.content ?? '<no content>'}`,
                     );
 
                 if (channel.canMessage && channel.canEmbedLinks) {

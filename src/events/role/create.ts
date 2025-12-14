@@ -1,14 +1,49 @@
 import { CustomListener } from '@nova/listeners/CustomListener';
 import { GatewayClientEvents } from 'detritus-client';
+import { ChannelGuildText } from 'detritus-client/lib/structures';
+import { Embed } from 'detritus-client/lib/utils';
+
 @CustomListener.applyOptions({
     event: CustomListener.eventNames.GUILD_ROLE_CREATE,
     emitter: 'client',
-    id: 'guild.role.create',
+    id: 'client.role.create',
     type: 'on',
     enabled: true,
 })
-export default class GuildChannelUPDATE extends CustomListener {
+export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.GuildRoleCreate) {
-        console.log(`new user: ${data.role.id}`);
+        const createdChannel = data.role;
+        if (!createdChannel) return;
+        if (!this.enabled) return;
+        if (!createdChannel.guild) return;
+
+        const collection = this.client.db.guilds;
+
+        if (createdChannel.guild) {
+            const settings = await collection.findOne({
+                guildId: createdChannel.guild.id,
+            });
+            if (settings?.mod_log) {
+                if (!settings.mod_log.enabled) return;
+                if (!settings.mod_log.channels) return;
+                if (!settings.mod_log.channel) return;
+
+                const channel = createdChannel.guild.channels.get(
+                    settings.mod_log.channel,
+                ) as ChannelGuildText;
+                if (!channel) return;
+
+                const embed = new Embed()
+                    .setColor(0xbc2e29)
+                    .setTimestamp()
+                    .setDescription(
+                        `New role: ${createdChannel.name}`,
+                    );
+
+                if (channel.canMessage && channel.canEmbedLinks) {
+                    await channel.createMessage({ embeds: [embed] });
+                }
+            }
+        }
     }
 }

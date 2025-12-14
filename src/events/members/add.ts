@@ -64,13 +64,13 @@ export default class GuildMemberAdd extends CustomListener {
             )
             .setThumbnail(member.avatarUrl);
 
-        const channel = this.client.channels.get(
-            '1385968836662267997',
+        const channel = guild.channels.get(
+            settings.mod_log.channel,
         ) as ChannelGuildText;
 
         await channel.createMessage({
             embeds: [embed],
-            components: [actions],
+            // components: [actions],
         });
     }
 }
