@@ -198,7 +198,7 @@ export default class RollCommand extends CustomCommand {
             }),
         ];
         return ctx.say(`:game_die:${label ? ` [${label}]` : ''} ${codestring(dice)}: \`${total}\`\n${str}` )
-        //return ctx.display(container);
+        //      return ctx.display(container);
     }
 
     roll(input: string): {

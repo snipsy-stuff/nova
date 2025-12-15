@@ -38,7 +38,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                     .setColor(0x57fc41)
                     .setDescription(
                         [
-                            `${user.name} remove reaction in <#${data.channelId}>`,
+                            `${user.name} removed a reaction in <#${data.channelId}>`,
                             `-# Message by @${msg.author.name}`,
                             '',
                             `Reaction Emoji: ${data.reaction.emoji.format} `,

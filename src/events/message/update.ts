@@ -49,7 +49,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                     .setThumbnail(msg.author.avatarUrl)
                     .setTimestamp()
                     .setDescription(
-                        `Message updatedd in #${msg.channel.name}\n## old Content\n${msg.content ?? '<no content>'}\n## new Content:\n${data.differences.content}`,
+                        `Message updatedd in #${msg.channel.name}\n## old Content\n${data.differences.content ?? '<no content>'}\n## new Content:\n${msg.content}`,
                     );
 
                 if (channel.canMessage && channel.canEmbedLinks) {
