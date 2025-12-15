@@ -40,7 +40,7 @@ import { codestring } from 'detritus-client/lib/utils/markup';
 })
 export default class RollCommand extends CustomCommand {
     async exec(ctx: CustomContext<{ dice: string; label?: string }>) {
-        let dice = ctx.args.dice;
+        let dice = ctx.args.dice.replace(/\s+/g, '');
         const label = ctx.args.label || '';
 
         if (label) {
@@ -178,7 +178,7 @@ export default class RollCommand extends CustomCommand {
                 dice = 'd' + dice;
             }
         }
-        await ctx.say('rolling...');
+        //await ctx.say('rolling...');
         const { total, details } = this.roll(dice);
 
         const rolls: number[] = [];
@@ -197,7 +197,8 @@ export default class RollCommand extends CustomCommand {
                 content: str,
             }),
         ];
-        return ctx.display(container);
+        return ctx.say(`:game_die:${label ? ` [${label}]` : ''} ${codestring(dice)}: \`${total}\`\n${str}` )
+        //return ctx.display(container);
     }
 
     roll(input: string): {

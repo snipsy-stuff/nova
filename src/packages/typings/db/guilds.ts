@@ -38,7 +38,7 @@ interface WelcomeSettings {
 interface WelcomeAccountAgeSettings {
     enabled: boolean;
     min_age: number;
-    action: 'kick' | 'mute' | 'ban';
+    action: 'kick' | 'mute' | 'ban' | 'none';
 }
 
 interface TupperBotSettings {

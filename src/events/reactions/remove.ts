@@ -4,7 +4,7 @@ import { ChannelGuildText } from 'detritus-client/lib/structures';
 import { Embed } from 'detritus-client/lib/utils';
 
 @CustomListener.applyOptions({
-    event: CustomListener.eventNames.MESSAGE_REACTION_ADD,
+    event: CustomListener.eventNames.MESSAGE_REACTION_REMOVE,
     emitter: 'client',
     id: 'client.reaction.add',
     type: 'on',

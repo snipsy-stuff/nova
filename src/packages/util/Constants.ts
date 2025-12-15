@@ -14,7 +14,7 @@ export const owners: string[] = [
     '735199620803854428',
 ];
 
-export const defaultSettings: GuildSetings = {
+export const defaultSettings: Required<GuildSetings> = {
     guildId: '',
     mod_log: {
         enabled: false,
@@ -36,6 +36,19 @@ export const defaultSettings: GuildSetings = {
         messages: [],
         react_emoji: '',
     },
+    welcome: {
+        enabled: false,
+        channel: '',
+        bans: false,
+        account_age: {
+            enabled: false,
+            min_age: 0,
+            action: 'none'
+        }
+    },
+    tupper: {
+        enabled: false
+    }
 };
 
 export const contentTypes = {

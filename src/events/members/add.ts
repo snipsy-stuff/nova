@@ -20,7 +20,9 @@ import {
 })
 export default class GuildMemberAdd extends CustomListener {
     async run(data: GatewayClientEvents.GuildMemberAdd) {
-        if (data.isDuplicate) return;
+        if (data.isDuplicate) {
+            console.log(`duplicated member`);
+        }
         const member = data.member;
         const settings = await this.client.db.guilds.findOne({
             guildId: data.guildId,
@@ -50,11 +52,16 @@ export default class GuildMemberAdd extends CustomListener {
                     .setLabel('kick'),
             );
 
+            if (data.isDuplicate) {
+                embed.setFooter('is duplicate.')
+            }
+
         embed
             .setAuthor(
                 `${member.name}`,
                 member.avatarUrlFormat('png'),
             )
+            
             .setTimestamp(Date.now())
 
             .setDescription(
