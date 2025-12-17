@@ -1,15 +1,8 @@
 import { CustomListener } from '@nova/listeners/CustomListener';
 import { GatewayClientEvents } from 'detritus-client';
 import { BaseCollection } from 'detritus-client/lib/collections';
-import {
-    AuditLogActionTypes,
-    Permissions,
-} from 'detritus-client/lib/constants';
-import {
-    ChannelGuildText,
-    Message,
-    User,
-} from 'detritus-client/lib/structures';
+import { Permissions } from 'detritus-client/lib/constants';
+import { ChannelGuildText } from 'detritus-client/lib/structures';
 import { Embed, PermissionTools } from 'detritus-client/lib/utils';
 
 @CustomListener.applyOptions({
@@ -83,7 +76,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                     );
 
                     setTimeout(
-() =>
+                        () =>
                             this.ratelimit.delete(
                                 `${msg.guild?.id}:${msg.author.id}`,
                             ),

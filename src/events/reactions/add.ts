@@ -36,7 +36,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                 settings.mod_log.reactions
             ) {
                 const embed = new Embed()
-                    .setColor(0x57fc41)
+                    .setColor(0x57f287)
                     .setDescription(
                         [
                             `${user.name} reacted in <#${data.channelId}>`,

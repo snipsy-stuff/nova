@@ -34,7 +34,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                 if (!channel) return;
 
                 const embed = new Embed()
-                    .setColor(0xbc2e29)
+                    .setColor(0x57f287)
                     .setTimestamp()
                     .setDescription(
                         `New role: ${createdChannel.name}`,

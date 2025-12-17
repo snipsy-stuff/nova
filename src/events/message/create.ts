@@ -1,5 +1,6 @@
 import { CustomListener } from '@nova/listeners/CustomListener';
 import { GatewayClientEvents } from 'detritus-client';
+// import { Message } from 'detritus-client/lib/structures';
 
 @CustomListener.applyOptions({
     event: CustomListener.eventNames.MESSAGE_CREATE,

@@ -63,7 +63,7 @@ export default class GuildMemberAdd extends CustomListener {
             )
 
             .setTimestamp(Date.now())
-
+            .setColor(0x57f287)
             .setDescription(
                 [
                     `**Account created**: ${timestamp(member.user.createdAt)}`,

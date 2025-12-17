@@ -5,10 +5,10 @@ import { GatewayClientEvents } from 'detritus-client';
     emitter: 'client',
     id: 'client.gateway.raw',
     type: 'on',
-    enabled: false,
+    enabled: true,
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.Raw) {
-        console.log(JSON.stringify(data));
+        if (data.t === null) console.log(JSON.stringify(data));
     }
 }
