@@ -50,7 +50,7 @@ export class BaseCommand extends Interaction.InteractionCommand {
                     context: Interaction.InteractionContext,
                     //args: Interaction.ParsedArgs,
                 ) {
-                    return !owners.includes(context.userId);
+                    return owners.includes(context.userId);
                 }
             };
         };

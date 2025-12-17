@@ -63,7 +63,6 @@ export default class ClientGatewayReadyEvent extends CustomListener {
             const hit = settings.star_board.emojis.find(
                 (em) => data.reaction.emoji.id === em.id,
             );
-            console.log(hit);
             if (hit) {
                 if (!settings.star_board.messages) {
                     settings.star_board.messages = [];

@@ -3,7 +3,9 @@ import { Constants, Interaction } from 'detritus-client';
 import { ApplicationCommandOptionTypes } from 'detritus-client/lib/constants';
 import { CustomContext } from 'packages/commands/CustomInteractionContext';
 
-export abstract class SubCommand extends Interaction.InteractionCommandOption {
+export abstract class SubCommand
+    extends Interaction.InteractionCommandOption
+{
     abstract exec(
         ctx: CustomContext<Record<string, unknown>>,
     ): Promise<unknown>;

@@ -6,7 +6,7 @@ import { Embed } from 'detritus-client/lib/utils';
 @CustomListener.applyOptions({
     event: CustomListener.eventNames.MESSAGE_REACTION_REMOVE,
     emitter: 'client',
-    id: 'client.reaction.add',
+    id: 'client.reaction.remove',
     type: 'on',
     enabled: true,
 })

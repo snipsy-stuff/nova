@@ -94,11 +94,10 @@ export class CustomContext<
         if (Array.isArray(options?.components)) {
             options.components = [components, ...options.components];
         }
-        console.log(components.components.length)
+        console.log(components.components.length);
         return this.send({
             ...options,
-            flags:
-                MessageFlags.IS_COMPONENTS_V2
+            flags: MessageFlags.IS_COMPONENTS_V2,
             // components: [components],
         });
     }

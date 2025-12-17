@@ -52,16 +52,16 @@ export default class GuildMemberAdd extends CustomListener {
                     .setLabel('kick'),
             );
 
-            if (data.isDuplicate) {
-                embed.setFooter('is duplicate.')
-            }
+        if (data.isDuplicate) {
+            embed.setFooter('is duplicate.');
+        }
 
         embed
             .setAuthor(
                 `${member.name}`,
                 member.avatarUrlFormat('png'),
             )
-            
+
             .setTimestamp(Date.now())
 
             .setDescription(

@@ -29,7 +29,7 @@ const client = new NovaShardClient(token, {
             GatewayIntents.GUILD_MESSAGES,
             GatewayIntents.MESSAGE_CONTENT,
             GatewayIntents.GUILD_PRESENCES,
-            GatewayIntents.GUILD_MEMBERS
+            GatewayIntents.GUILD_MEMBERS,
         ],
     },
 });
@@ -70,4 +70,6 @@ async function start() {
     await commands.run({ wait: true });
 }
 
-start().catch(console.error);
+start().catch((err) => {
+    console.error(err);
+});

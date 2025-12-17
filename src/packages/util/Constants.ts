@@ -43,12 +43,12 @@ export const defaultSettings: Required<GuildSetings> = {
         account_age: {
             enabled: false,
             min_age: 0,
-            action: 'none'
-        }
+            action: 'none',
+        },
     },
     tupper: {
-        enabled: false
-    }
+        enabled: false,
+    },
 };
 
 export const contentTypes = {

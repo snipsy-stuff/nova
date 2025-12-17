@@ -11,10 +11,8 @@ export default class TestCommand extends CustomCommand {
     async exec(
         ctx: CustomContext<Record<string, unknown>>,
     ): Promise<unknown> {
-        await ctx.say('sending member update events...');
-        return ctx.client.emit(
-            CustomListener.eventNames.GUILD_MEMBER_ADD,
-            { member: ctx.member },
-        );
+        const data = await ctx.guild?.fetchAuditLogs({});
+        console.log(data?.map((audit) => audit.actionType));
+        return ctx.say(data?.length.toString() || 'no');
     }
 }
