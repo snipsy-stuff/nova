@@ -41,7 +41,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                         [
                             `${user.name} reacted in <#${data.channelId}>`,
                             `-# Message by @${msg.author.name}`,
-                            '',
+                            msg.content,
                             `Reaction Emoji: ${data.reaction.emoji.format} `,
                         ].join('\n'),
                     );
@@ -86,7 +86,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                     const content = msg.content.length
                         ? msg.content.length >= 2000
                             ? msg.content.slice(0, 2000) + '...'
-                            : ''
+                            : msg.content
                         : msg.attachments.length
                           ? `[no content. ${msg.attachments.length} attachments]`
                           : msg.embeds.length

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 import { CustomListener } from '@nova/listeners/CustomListener';
-import { GuildSetings } from '@nova/typings/db/guilds';
+import { GuildSetings } from '@nova/typings/db/settings.guilds';
 import { defaultSettings } from '@nova/util/Constants';
 import { GatewayClientEvents } from 'detritus-client';
 import { ActivityTypes } from 'detritus-client/lib/constants';

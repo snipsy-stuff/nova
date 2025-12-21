@@ -1,4 +1,4 @@
-import { GuildSetings } from '@nova/typings/db/guilds';
+import { GuildSetings } from '@nova/typings/db/settings.guilds';
 import { Db } from 'mongodb';
 
 export class DbClient {

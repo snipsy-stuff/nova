@@ -1,7 +1,11 @@
 import { NovaShardClient } from '@nova/core/client/ShardClient';
-import { ClientEvents } from 'detritus-client/lib/constants';
+import {
+    ClientEvents,
+    Permissions,
+} from 'detritus-client/lib/constants';
 import { EventOptions } from 'packages/typings/events';
 import { CustomListenerHandler } from './ListenerHandler';
+import { Guild } from 'detritus-client/lib/structures';
 
 export abstract class CustomListener implements EventOptions {
     client!: NovaShardClient;
@@ -39,6 +43,10 @@ export abstract class CustomListener implements EventOptions {
                 }
             };
         };
+    }
+
+    canSeeAudit(guild: Guild) {
+        return guild.me && guild.me.can(Permissions.VIEW_AUDIT_LOG);
     }
 
     static get eventNames() {

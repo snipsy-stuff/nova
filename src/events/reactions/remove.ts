@@ -40,7 +40,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                         [
                             `${user.name} removed a reaction in <#${data.channelId}>`,
                             `-# Message by @${msg.author.name}`,
-                            '',
+                            msg.content,
                             `Reaction Emoji: ${data.reaction.emoji.format} `,
                         ].join('\n'),
                     );

@@ -1,4 +1,4 @@
-import { GuildSetings } from '@nova/typings/db/guilds';
+import { GuildSetings } from '@nova/typings/db/settings.guilds';
 
 export const SUPPORT_SERVER = '';
 
