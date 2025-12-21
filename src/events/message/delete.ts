@@ -16,8 +16,8 @@ export default class ClientGatewayReadyEvent extends CustomListener {
     ratelimit = new BaseCollection<string, string[]>();
     async run(data: GatewayClientEvents.MessageCreate) {
         const msg = data.message;
-        if (msg.content === 'USER_WAS_BANNED') return;
         if (!msg) return;
+        if (msg.content === 'USER_WAS_BANNED') return;
         if (!this.enabled) return;
         if (!msg.channel || msg.author.bot) return;
         if (!msg.guild) return;
