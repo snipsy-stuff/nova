@@ -42,7 +42,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                         await msg.guild.fetchAuditLogs({})
                     ).first();
                     if (checkforban?.actionType === 22) {
-                        data.message.content = 'USER_WAS_BANNED';
+                        return;
                     }
                 }
                 const channel = msg.guild.channels.get(
@@ -84,7 +84,7 @@ export default class ClientGatewayReadyEvent extends CustomListener {
                         1000,
                     );
                 }
-
+                if (msg.content === 'USER_WAS_BANNED') return;
                 const embed = new Embed()
                     .setColor(0xbc2e29)
                     .setAuthor(msg.author.name, msg.author.avatarUrl)
