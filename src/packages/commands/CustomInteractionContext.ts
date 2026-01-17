@@ -101,7 +101,16 @@ export class CustomContext<
             // components: [components],
         });
     }
-
+    async ephemeral(
+        content: string,
+        options?: InteractionEditOrRespond,
+    ) {
+        return this.send({
+            ...options,
+            content,
+            flags: 64,
+        });
+    }
     async say(content: string, options?: InteractionEditOrRespond) {
         return this.send({
             ...options,

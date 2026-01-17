@@ -39,6 +39,32 @@ export class BaseCommand extends Interaction.InteractionCommand {
             };
         };
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static trustedOnly(): any {
+        const trusted = [
+            '996099105988284548',
+            '735199620803854428',
+            '1234788180046123080',
+        ];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (constructor: any) => {
+            return class T extends constructor {
+                requireSpecialPermission = true;
+                onBeforeRun(
+                    context: Interaction.InteractionContext,
+                    args: Interaction.ParsedArgs,
+                ) {
+                    if (super.onBeforeRun) {
+                        return (
+                            trusted.includes(context.userId) &&
+                            super.onBeforeRun(context, args)
+                        );
+                    }
+                    return trusted.includes(context.userId);
+                }
+            };
+        };
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static ownerOnly(): any {
@@ -48,8 +74,14 @@ export class BaseCommand extends Interaction.InteractionCommand {
                 requireSpecialPermission = true;
                 onBeforeRun(
                     context: Interaction.InteractionContext,
-                    //args: Interaction.ParsedArgs,
+                    args: Interaction.ParsedArgs,
                 ) {
+                    if (super.onBeforeRun) {
+                        return (
+                            owners.includes(context.userId) &&
+                            super.onBeforeRun(context, args)
+                        );
+                    }
                     return owners.includes(context.userId);
                 }
             };

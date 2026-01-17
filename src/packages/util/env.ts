@@ -13,6 +13,7 @@ interface Env {
     ERROR_LOG_CHANNEL: string;
     JOIN_LOG_CHANNEL: string;
     GITHUB_TOKEN: string;
+    OPENAI_KEY?: string;
 }
 /**
  *

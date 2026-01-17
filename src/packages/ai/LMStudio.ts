@@ -1,12 +1,17 @@
+import { parseEnv } from '@nova/util/env';
 import { User } from 'detritus-client/lib/structures';
+import * as openai from 'openai';
 export class LmStudio {
     models = {
+        chatgpt: 'chatgpt',
         gpt4: 'gpt-oss-20b',
         mistral: 'mistral@7b',
         qwen2: 'deep-seek-r1@1.5b',
         lama: 'lama@1b',
         gemma3: 'gemma3@4b',
     } as const;
+
+    openai = new openai.OpenAI({ apiKey: parseEnv().OPENAI_KEY });
 
     async request(content: string[]) {
         const NAME = 'GAIA';
@@ -61,7 +66,28 @@ export class LmStudio {
         user: User,
     ) {
         const sass = Math.floor(Math.random() * 20000) === 1500;
-
+        if (model === 'chatgpt') {
+            return this.openai.responses
+                .create({
+                    model: 'gpt-5',
+                    stream: false,
+                    input: [
+                        {
+                            role: 'system',
+                            content: `
+Avoid robotic phrasing, try to speak like a human being.
+Your main task will be to answer questions related to Pathfinder 1E and realted 3rd party content.
+Please format the response so it is only using Discord's markdown as formatting.${sass ? 'make it a sassy response towards ' + user.name : ''}
+`,
+                        },
+                        {
+                            role: 'user',
+                            content: input,
+                        },
+                    ],
+                })
+                .then((res) => res.output_text);
+        }
         const body = {
             model: model,
             stream: false,
