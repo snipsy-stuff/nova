@@ -9,7 +9,7 @@ import { Embed } from 'detritus-client/lib/utils';
     emitter: 'client',
     id: 'client.reaction.add',
     type: 'on',
-    enabled: true,
+    enabled: false,
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.MessageReactionAdd) {

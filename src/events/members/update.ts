@@ -5,7 +5,7 @@ import { GatewayClientEvents } from 'detritus-client';
     emitter: 'client',
     id: 'guild.members.update',
     type: 'on',
-    enabled: true,
+    enabled: false,
 })
 export default class GuildChannelUPDATE extends CustomListener {
     async run(data: GatewayClientEvents.GuildMemberUpdate) {

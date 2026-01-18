@@ -2,6 +2,7 @@ import { CustomListener } from '@nova/listeners/CustomListener';
 import { GatewayClientEvents } from 'detritus-client';
 import { ChannelGuildText } from 'detritus-client/lib/structures';
 import { Embed } from 'detritus-client/lib/utils';
+
 import { inspect } from 'util';
 
 @CustomListener.applyOptions({
@@ -9,7 +10,7 @@ import { inspect } from 'util';
     event: CustomListener.eventNames.VOICE_STATE_UPDATE,
     id: 'voice.state.update',
     type: 'on',
-    enabled: true,
+    enabled: false,
 })
 export default class VoiceChanelJoinEvent extends CustomListener {
     async run(data: GatewayClientEvents.VoiceStateUpdate) {

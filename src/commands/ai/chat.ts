@@ -13,7 +13,6 @@ const models = {
 @CustomCommand.applyOptions({
     name: 'chat',
     description: 'chat with an ai.',
-
     options: [
         new StringOption()
             .setName('text')

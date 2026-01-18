@@ -7,7 +7,7 @@ import { GatewayClientEvents } from 'detritus-client';
     emitter: 'client',
     id: 'client.message.create',
     type: 'on',
-    enabled: true,
+    enabled: false,
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     async run(data: GatewayClientEvents.MessageCreate) {

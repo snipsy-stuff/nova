@@ -10,7 +10,7 @@ import { Embed, PermissionTools } from 'detritus-client/lib/utils';
     emitter: 'client',
     id: 'client.message.delete',
     type: 'on',
-    enabled: true,
+    enabled: false,
 })
 export default class ClientGatewayReadyEvent extends CustomListener {
     ratelimit = new BaseCollection<string, string[]>();

@@ -16,7 +16,7 @@ import { timestamp } from 'detritus-client/lib/utils/markup';
     emitter: 'client',
     id: 'guild.members.remove',
     type: 'on',
-    enabled: true,
+    enabled: false,
 })
 export default class GuildMemberAdd extends CustomListener {
     async run(data: GatewayClientEvents.GuildMemberAdd) {

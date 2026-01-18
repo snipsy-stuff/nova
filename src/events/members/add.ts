@@ -16,7 +16,7 @@ import {
     emitter: 'client',
     id: 'guild.members.add',
     type: 'on',
-    enabled: true,
+    enabled: false,
 })
 export default class GuildMemberAdd extends CustomListener {
     async run(data: GatewayClientEvents.GuildMemberAdd) {
