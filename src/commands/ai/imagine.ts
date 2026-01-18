@@ -11,15 +11,13 @@ type model =
     | 'dall-e-2'
     | 'dall-e-3'
     | 'gpt-image-1'
-    | 'gpt-image-1-mini'
-    | 'comfy';
+    | 'gpt-image-1-mini';
 const models: Record<model, model> = {
     'gpt-image-1.5': 'gpt-image-1.5',
     'dall-e-2': 'dall-e-2',
     'dall-e-3': 'dall-e-3',
     'gpt-image-1': 'gpt-image-1',
     'gpt-image-1-mini': 'gpt-image-1-mini',
-    comfy: 'comfy',
 };
 
 @CustomCommand.trustedOnly()
@@ -57,9 +55,6 @@ export default class AIChatCommand extends CustomCommand {
         const ai = new OpenAI({
             apiKey: env.parseEnv().OPENAI_KEY,
         });
-        if (model === 'comfy') {
-            return ctx.error('not yet implemented');
-        }
         const options = ['dall-e-2', 'dall-e-3'].includes(model)
             ? undefined
             : ({
