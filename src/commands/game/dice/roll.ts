@@ -189,14 +189,16 @@ export default class RollCommand extends CustomCommand {
         }
 
         const str = ['```js', rolls.join(', '), '```'].join('\n');
-        const container = [
-            new ComponentTextDisplay({
-                content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(dice)}: \`${total}\` `,
-            }),
-            new ComponentTextDisplay({
-                content: str,
-            }),
-        ];
+        //        const container = [
+        //             new ComponentTextDisplay({
+        //                 content: `:game_die:${label ? ` [${label}]` : ''} ${codestring(dice)}: \`${total}\` `,
+        //             }),
+        //             new ComponentTextDisplay({
+        //                 content: str,
+        //             }),
+        //         ];
+        //         if (container) {
+        //         }
         return ctx.say(
             `:game_die:${label ? ` [${label}]` : ''} ${codestring(dice)}: \`${total}\`\n${str}`,
         );
