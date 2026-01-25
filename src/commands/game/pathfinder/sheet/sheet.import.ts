@@ -5,6 +5,7 @@ import { SubCommand } from '@nova/commands/options/SubCommand';
 import { UserOption } from '@nova/commands/options/UserOption';
 import { CustomError } from '@nova/core/errors';
 import { SheetData } from '@nova/typings/pathfinder/sheetdata';
+import { ProgressList } from '@nova/util/loadingListThing';
 import { MessageFlags } from 'detritus-client/lib/constants';
 import { Attachment, User } from 'detritus-client/lib/structures';
 import { Embed } from 'detritus-client/lib/utils';
@@ -45,52 +46,80 @@ export class SheetAddCommand extends SubCommand {
             `creating new sheet in ${dir}. fetching data..`,
             'commands:sheet.add',
         );
-        await ctx.say('creating sheet...');
-        const data = await fetch(ctx.args.sheet.url, {
-            method: 'GET',
-            headers: {}, // ensures no content-type is added
+
+        const pl = new ProgressList(ctx, {
+            error: ctx.emote('error'),
+            loading: ctx.emote('loading'),
+            success: ctx.emote('success'),
         });
+        pl.add('fetching sheet...');
+        pl.add('saving .por file...');
+        pl.add('parsing sheet...');
+        pl.add('saving sheet...');
+        pl.add('creating small info...');
+        await pl.start();
+        let data: Response;
+        try {
+            data = await fetch(ctx.args.sheet.url, {
+                method: 'GET',
+                headers: {}, // ensures no content-type is added
+            });
+            await pl.set('fetching sheet...', 'success');
+        } catch (err) {
+            console.error(err);
+            await pl.set('fetching sheet...', 'error');
+            await pl.set('saving .por file...', 'error');
+            await pl.set('parsing sheet...', 'error');
+            await pl.set('saving sheet...', 'error');
+            await pl.set('creating small info...', 'error');
+            await pl.end();
+            return;
+        }
+
         ctx.client.logger.debug(
             `done!. ${data.ok === true ? 'OK' : 'NOT_OK'} `,
             'commands:sheet:add',
         );
         if (!data.ok) {
-            return ctx.error('failed to fetch the sheet data.');
+            await pl.set('fetching sheet...', 'error');
+            await pl.set('saving .por file...', 'error');
+            await pl.set('parsing sheet...', 'error');
+            await pl.set('saving sheet...', 'error');
+            await pl.set('creating small info...', 'error');
+            await pl.end();
+            return;
         }
-
-        await ctx.client.games.pathfinder.sheets.createIndex();
+        await await ctx.client.games.pathfinder.sheets.createIndex();
         const filecontent = Buffer.from(await data.arrayBuffer());
         const player = ctx.args.user?.id ?? ctx.user.id;
-        await writeFile(dir, filecontent, { flag: 'w' });
-        let char: SheetData | undefined | null = null;
         try {
-            char = await ctx.client.games.pathfinder.sheets
-                .create(dir, player)
-                .catch(async (e) => {
-                    console.error(e);
-                    if (e) {
-                        switch (e.message) {
-                            case 'NO_CLASSES':
-                                await ctx.error(
-                                    `it appears that the sheet you send is not Valid.`,
-                                );
-                                return null;
+            await writeFile(dir, filecontent, { flag: 'w' });
+            await pl.set('saving .por file...', 'success');
+        } catch (err) {
+            console.error(err);
+            await pl.set('saving .por file...', 'error');
+            await pl.set('parsing sheet...', 'error');
+            await pl.set('saving sheet...', 'error');
+            await pl.set('creating small info...', 'error');
+            await pl.end();
+            return;
+        }
+        let char: SheetData | undefined | null = null;
 
-                            default:
-                                return null;
-                        }
-                        return null;
-                    }
-                });
-        } catch (error) {
-            if (!(error instanceof Error)) {
-                return ctx.error(
-                    'I do not know what happened. Please try again later.',
-                );
-            }
-            return ctx.error(
-                `Eror creating sheet ${codestring(error.message)}`,
+        try {
+            char = await ctx.client.games.pathfinder.sheets.create(
+                dir,
+                player,
             );
+            await pl.set('parsing sheet...', 'success');
+            await pl.set('saving sheet...', 'success');
+        } catch (error) {
+            console.log(error);
+            await pl.set('parsing sheet...', 'error');
+            await pl.set('saving sheet...', 'error');
+            await pl.set('creating small info...', 'error');
+            await pl.end();
+            return;
         }
 
         if (!char) {
@@ -126,12 +155,12 @@ export class SheetAddCommand extends SubCommand {
                     `Bio: ${char.personal.description || 'empty over here'}`,
                 ].join('\n'),
             );
-
+        await pl.set('creating small info...', 'success');
+        await pl.end();
         return ctx
             .say(
                 `${ctx.emote('success')} successfully imported and parsed the ${char?.name} character sheet for ${!p ? 'the Dm' : p?.mention}.\nHere some basic info:`,
                 {
-                    flags: MessageFlags.EPHEMERAL,
                     embeds: [embed],
                     files: img
                         ? [

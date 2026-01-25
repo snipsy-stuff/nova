@@ -59,22 +59,24 @@ export default class ClientGatewayReadyEvent extends CustomListener {
 
         const botGuilds = this.client.guilds.map((guild) => guild.id);
         const toSave: GuildSetings[] = [];
-        const col = this.client.db.guilds;
-        const guildSettings = await col.find({}).toArray();
+        if (this.client.db.db) {
+            const col = this.client.db.guilds;
+            const guildSettings = await col.find({}).toArray();
 
-        for (const guild of botGuilds) {
-            const existing = guildSettings.find(
-                (g) => g.guildId === guild,
-            );
-            if (!existing) {
-                toSave.push({
-                    ...defaultSettings,
-                    guildId: guild,
-                });
+            for (const guild of botGuilds) {
+                const existing = guildSettings.find(
+                    (g) => g.guildId === guild,
+                );
+                if (!existing) {
+                    toSave.push({
+                        ...defaultSettings,
+                        guildId: guild,
+                    });
+                }
             }
-        }
-        if (toSave.length) {
-            await col.insertMany(toSave);
+            if (toSave.length) {
+                await col.insertMany(toSave);
+            }
         }
         const guilds = app.approximateGuildCount;
         const users = app.approximateUserInstallCount;
