@@ -3,7 +3,7 @@
     "description": "nova a ''easy-to-use'' Discord bot.",
     "packageManager": "yarn@4.9.2",
     "dependencies": {
-        "detritus-client": "0.17.0-beta.89",
+        "detritus-client": "0.17.0-beta.91",
         "luxon": "^3.7.2",
         "mongodb": "^7.0.0",
         "openai": "^6.15.0",
