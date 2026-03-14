@@ -9,25 +9,15 @@ export default class PingCommand extends CustomCommand {
     async exec(
         ctx: CustomContext<Record<string, unknown>>,
     ): Promise<unknown> {
-        const pl = new ProgressList(ctx, {
-            error: ctx.emote('error'),
-            loading: ctx.emote('loading'),
-            success: ctx.emote('success'),
-        });
         const oldTime = Date.now();
-
-        pl.add('pinging websocket...');
-        pl.add('pinging discord');
-        await pl.start();
+        await ctx.say('pinging...');
         const msHTTP = Date.now() - oldTime;
-        await pl.set('pinging discord', 'success');
         let msWS = 0;
         try {
             msWS = await ctx.client.gateway.ping(900);
-            await pl.set('pinging websocket', 'success');
         } catch (error) {
             console.log(error);
-            await pl.set('pinging websocket', 'error');
+            return ctx.error('failed to ping.');
         }
         return ctx.ephemeral(
             `Pong! ${msHTTP}ms (${msWS}ms on  the websocket)`,

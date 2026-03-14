@@ -11,7 +11,7 @@ let token = '';
 if (env.PRIMARY_TOKEN || env.DISCORD_TOKEN) {
     token = (env.PRIMARY_TOKEN || env.DISCORD_TOKEN) as string;
 }
-if (env.BETA_TOKEN || env._DISCORD_TOKEN) {
+if (!token && (env.BETA_TOKEN || env._DISCORD_TOKEN)) {
     token = (env.BETA_TOKEN || env._DISCORD_TOKEN) as string;
 }
 if (!token) {

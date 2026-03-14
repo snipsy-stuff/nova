@@ -7,6 +7,10 @@ export class DbClient {
         this.db = db!;
     }
 
+    get pets() {
+        return this.db.collection;
+    }
+
     get guilds() {
         return this.db?.collection<GuildSetings>('guild_settings');
     }
