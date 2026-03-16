@@ -67,7 +67,8 @@ export class SpellInfoCommand extends SubCommand {
         const descr =
             spell.description.length >= 1901
                 ? spell.description.slice(0, 1900) +
-                  `\n[text too long. more info here](https://github.com/snipsy-stuff/data/blob/main/docs/${spell.class.toLowerCase()}/${spell.name.replace('/', '-')}.md)`
+                  //https://github.com/snipsy-stuff/data/blob/main/docs/sorcerer/${encodeURIComponent('Dominate Person')}.md)
+                  `\n[text too long. more info here](https://github.com/snipsy-stuff/data/blob/main/docs/${spell.class.toLowerCase()}/${encodeURIComponent(spell.name.replace('/', '-'))}.md)`
                 : spell.description;
         const description = [
             `**Casting time**: ${spell.casttime}`,
