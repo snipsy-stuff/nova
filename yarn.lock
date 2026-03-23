@@ -430,13 +430,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detritus-client-rest@npm:^0.11.0-beta.21":
-  version: 0.11.0-beta.21
-  resolution: "detritus-client-rest@npm:0.11.0-beta.21"
+"detritus-client-rest@npm:^0.11.0-beta.24":
+  version: 0.11.0-beta.24
+  resolution: "detritus-client-rest@npm:0.11.0-beta.24"
   dependencies:
     detritus-rest: "npm:^0.9.0-beta.13"
     detritus-utils: "npm:^0.4.0"
-  checksum: 10c0/e38ca019c300df6698f3219e00d13056801626317cf1768ef6b62d40889af2484377fd4678046b0f72dd90e14e4a2ac2f918d02ac5dac4887cd3f90b35eeb633
+  checksum: 10c0/a1682052f00008048bba3a3172eeefd13ef6364f7ab77738c266b8a673f102382c6c9f82d7c27a58e11aa1b91c0b52c5a07cd54d3ea1208260fe15db1c862106
   languageName: node
   linkType: hard
 
@@ -464,11 +464,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detritus-client@npm:0.17.0-beta.89":
-  version: 0.17.0-beta.89
-  resolution: "detritus-client@npm:0.17.0-beta.89"
+"detritus-client@npm:0.17.0-beta.99":
+  version: 0.17.0-beta.99
+  resolution: "detritus-client@npm:0.17.0-beta.99"
   dependencies:
-    detritus-client-rest: "npm:^0.11.0-beta.21"
+    detritus-client-rest: "npm:^0.11.0-beta.24"
     detritus-client-socket: "npm:^0.9.0-beta.5"
     detritus-utils: "npm:^0.4.0"
   peerDependencies:
@@ -482,7 +482,7 @@ __metadata:
       optional: true
     opusscript:
       optional: true
-  checksum: 10c0/e6df203ab823f3093d88c4d1205dd984032ae606c823c935b22adddf237e75ed413bbc0bb646ef1bd5050a969c0ea637405bc409f08b759e547b9a3d7daa92c0
+  checksum: 10c0/6c0f78cd14c9eb7c5b3340f1c0ac20e6a2a0b1a625fd6b6ad268eabb9735006c4ff466d41345fe5ee7b10276e0fcbe93f5d4b2203b43e5e19e06c6e508cf6344
   languageName: node
   linkType: hard
 
@@ -905,7 +905,7 @@ __metadata:
     "@types/luxon": "npm:^3.7.1"
     "@types/node": "npm:^25.3.0"
     "@types/xml2js": "npm:^0.4.14"
-    detritus-client: "npm:0.17.0-beta.89"
+    detritus-client: "npm:0.17.0-beta.99"
     eslint: "npm:^10.0.3"
     luxon: "npm:^3.7.2"
     mongodb: "npm:^7.1.0"
